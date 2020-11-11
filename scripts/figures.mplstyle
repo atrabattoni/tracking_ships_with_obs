@@ -1,14 +1,13 @@
+axes.linewidth: 0.5
 figure.dpi: 300
 figure.figsize: 3.4, 2.5
-font.size: 8
 font.family: sans-serif
-font.serif: Garamond
 font.sans-serif: Helvetica
-axes.linewidth: 0.5
+font.size: 8
 lines.linewidth: 0.5
 lines.markeredgewidth  : 0.5
-xtick.major.width: 0.5
-ytick.major.width: 0.5
-xtick.minor.width: 0.5
-ytick.minor.width: 0.5
 pdf.fonttype : 42
+xtick.major.width: 0.5
+xtick.minor.width: 0.5
+ytick.major.width: 0.5
+ytick.minor.width: 0.5
