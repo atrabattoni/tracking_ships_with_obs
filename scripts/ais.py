@@ -21,8 +21,13 @@ projection = ccrs.PlateCarree()
 
 # Build Frame
 plt.style.use("figures.mplstyle")
-fig = plt.figure()
-ax = fig.add_subplot(projection=projection)
+fig, ax = plt.subplots(
+    subplot_kw=dict(projection=projection),
+    gridspec_kw=dict(
+        left=0.05, right=1.0,
+        bottom=0.06, top=0.99,
+    )
+)
 
 # AIS logs
 coeff = 2e-3

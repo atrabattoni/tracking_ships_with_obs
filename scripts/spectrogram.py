@@ -26,9 +26,13 @@ chunks = [x.sel(time=slice(date_range[i], date_range[i + 1]))
 
 # Plot
 plt.style.use("figures.mplstyle")
-fig, axes = plt.subplots(nrows=N, figsize=(7.1, 3), gridspec_kw={
-    "hspace": 0.1, "wspace": 0.1,
-})
+fig, axes = plt.subplots(nrows=N, figsize=(7.1, 3), 
+    gridspec_kw=dict(
+        hspace=0.11, wspace=0.0, 
+        left=0.06, right=0.97, 
+        bottom=0.07, top=0.98,
+    )
+)
 for i in range(N):
     img = axes[i].pcolormesh(
         chunks[i]["time"], chunks[i]["frequency"], chunks[i],
@@ -47,5 +51,4 @@ axes[-1].set_xticklabels(
      "00:00", "06:00", "12:00", "18:00",
      "00:00"])
 axes[N // 2].set_ylabel("Frequency [Hz]")
-
 fig.savefig("figs/spectrogram.pdf")
