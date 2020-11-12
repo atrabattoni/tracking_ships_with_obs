@@ -93,14 +93,14 @@ img = ax.pcolormesh(ell["time"], ell["azimuth"], np.log(ell.T),
                     vmin=-40, vmax=40, cmap=cc.coolwarm, rasterized=True)
 fig.colorbar(img, ax=ax, pad=0.01, label="Log-likelihood")
 ax.plot(peaks["time"], peaks,
-        ls="", marker="s", ms=2, mfc="none", mec="C2", label="detections")
+        ls="", marker="s", ms=2, mfc="none", mec="C2", label="detection")
 ax.plot(xtrack["time"], np.rad2deg(
     np.arctan2(xtrack.real, xtrack.imag)) % 360, "black", ls="-.", label="AIS")
 ax.set_ylim(0, 360)
 ax.yaxis.set_major_locator(MultipleLocator(60))
 ax.yaxis.set_minor_locator(MultipleLocator(10))
 ax.set_ylabel("Azimuth [°]")
-ax.legend(loc="lower right")
+# ax.legend(loc="lower right")
 
 ax.set_xlim(
     np.datetime64("2012-11-27T06:30:00"),
@@ -108,3 +108,5 @@ ax.set_xlim(
 )
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 fig.savefig("figs/method_direction.pdf")
+
+# %%
