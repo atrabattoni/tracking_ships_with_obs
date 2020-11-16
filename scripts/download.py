@@ -7,6 +7,13 @@ endtime = UTCDateTime("2013-05-29")
 st = client.get_waveforms(
     "YV", "RR03", "*", "*",
     starttime, endtime, attach_response=True)
+
+st = st.trim(
+    UTCDateTime("2013-05-20T12:00:00"),
+    UTCDateTime("2013-05-27T12:00:00"),
+    nearest_sample=False
+)
+
 st.write("waveforms.mseed")
 
 inventory = client.get_stations(

@@ -29,7 +29,7 @@ local_tracks = obsea.select_tracks(
 track = local_tracks.iloc[n_ship]
 
 # Save track
-with open("track.pkl", "wb") as file:
+with open("method_track.pkl", "wb") as file:
     pickle.dump(track, file)
 
 # Download associated waveforms

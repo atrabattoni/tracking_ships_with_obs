@@ -68,7 +68,7 @@ ceps = np.abs(obsea.analytic_signal(ceps))
 loglik = np.log(ell.mean("speed"))
 
 # Load AIS
-with open("track.pkl", "rb") as file:
+with open("method_track.pkl", "rb") as file:
     track = pickle.load(file)
 xtrack = obsea.track2xarr(track)
 xtrack -= reference
