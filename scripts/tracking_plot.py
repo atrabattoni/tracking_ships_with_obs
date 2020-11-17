@@ -7,6 +7,7 @@ import numpy as np
 import obsea
 import pandas as pd
 import xarray as xr
+from colorcet import cm as cc
 
 import utils
 
@@ -18,8 +19,8 @@ with open("segments.pkl", "rb") as file:
 lines = pd.read_pickle("lines.pkl")
 
 # Load loglik
-loglik_a = np.log(xr.open_dataarray("ell_a.nc"))
-loglik_r = np.log(xr.open_dataarray("ell_r.nc"))
+loglik_a = np.log(0.1 + 0.9 * xr.open_dataarray("ell_a.nc"))
+loglik_r = np.log(0.4 + 0.6 * xr.open_dataarray("ell_r.nc"))
 
 # Load tracks
 tracks = pd.read_pickle("tracks.pkl")
@@ -48,7 +49,9 @@ def plot(fig, cell, nsegment, ntrack):
         xtrack, segment, convert="posix")["time"].values
     t_line = utils.select_segment(
         xtrack_interp, segment, convert="posix")["time"].values
-
+    la = utils.select_segment(loglik_a, segment, convert="posix")
+    lr = utils.select_segment(loglik_r, segment, convert="posix")
+   
     r, a, _ = utils.generate_line(line["cpa_time"], line["cpa_distance"],
                                   line["speed_heading"], line["speed_value"], t_line)
     x = r * np.sin(a + np.deg2rad(77))
@@ -59,10 +62,13 @@ def plot(fig, cell, nsegment, ntrack):
     x_ais = r_ais * np.sin(a_ais + np.deg2rad(77))
     y_ais = r_ais * np.cos(a_ais + np.deg2rad(77))
 
-    inner_grid = cell.subgridspec(2, 2, wspace=0.07, hspace=0, width_ratios=[2, 1])
+    inner_grid = cell.subgridspec(2, 2, wspace=0.05, hspace=0, width_ratios=[2.4, 1])
 
     # direction
     ax = fig.add_subplot(inner_grid[0, 0])
+    ax.pcolormesh(pd.to_datetime(t_line, unit="s"),
+                  la["azimuth"], la.T, rasterized=True, cmap=cc.coolwarm,
+                  vmin=-40, vmax=40)
     ax.plot(t, atrack,
             marker="o", c="black", mfc="none", ls="", ms=2)
     ax.plot(t_interp, atrack_interp,
@@ -73,10 +79,13 @@ def plot(fig, cell, nsegment, ntrack):
     ax.tick_params(labelbottom=False, bottom=False, pad=1)
     ax.set_ylim(0, 360)
     ax.set_xlim(segment[0], segment[2])
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(90))
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(180))
 
     # distance
     ax = fig.add_subplot(inner_grid[1, 0])
+    ax.pcolormesh(pd.to_datetime(t_line, unit="s"),
+                  lr["distance"] / 1000, lr.T, rasterized=True, cmap=cc.coolwarm,
+                  vmin=-100, vmax=100)
     ax.plot(t, rtrack / 1000,
             marker="o", c="black", mfc="none", ls="", ms=2)
     ax.plot(t_interp, rtrack_interp / 1000,
@@ -94,6 +103,7 @@ def plot(fig, cell, nsegment, ntrack):
     ax.xaxis.set_major_formatter(formatter)
     ax.tick_params(pad=1)
 
+    ax.annotate(ntrack, (3, 3), xycoords='axes points', color="C2")
 
     # map
     ax = fig.add_subplot(inner_grid[:, 1])
@@ -119,11 +129,11 @@ def plot(fig, cell, nsegment, ntrack):
 
 ntracks = [1, 2, 3, 4, 5, 6, 8, 10, 11]
 plt.style.use("figures.mplstyle")
-fig = plt.figure(figsize=(7.1, 5))
+fig = plt.figure(figsize=(7.1, 5.5))
 outer_grid = fig.add_gridspec(5, 2,
-    hspace=0.2, wspace=0.12,
+    hspace=0.25, wspace=0.15,
     left=0.04, right=0.99,
-    bottom=0.04, top=0.99,
+    bottom=0.03, top=0.99,
 )
 k = 0
 for i in range(5):
@@ -136,4 +146,4 @@ for i in range(5):
             k += 1
         except IndexError:
             pass
-fig.savefig("tracking.pdf")
+fig.savefig("figs/tracking.pdf")
