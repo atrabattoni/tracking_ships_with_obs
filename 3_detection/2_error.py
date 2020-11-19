@@ -14,14 +14,13 @@ vmax = 3
 # %% Prepare data
 
 # Load peaks
-a = xr.open_dataarray("a.nc")
-r = xr.open_dataarray("r.nc")
-v = xr.open_dataarray("v.nc")
+a = xr.open_dataarray("../data/a.nc")
+r = xr.open_dataarray("../data/r.nc")
+v = xr.open_dataarray("../data/v.nc")
 
 # Load tracks
-tracks = pd.read_pickle("tracks.pkl")
+tracks = pd.read_pickle("../data/tracks.pkl")
 tracks = tracks["linestring"]
-tracks = tracks.apply(obsea.track2xarr)
 tracks = tracks.apply(lambda xarr: xarr.interp_like(a))
 tracks = xr.Dataset(tracks.to_dict())
 name_dict = {key: str(k) for k, key in enumerate(tracks.keys())}

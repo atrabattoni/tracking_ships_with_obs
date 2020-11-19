@@ -68,23 +68,22 @@ with open("segments.pkl", "wb") as file:
 
 # %% Plot
 
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(nrows=N, dpi=300, figsize=(5.3, 8))
 for i in range(N):
     ax = axes[i]
     ax_right = ax.twinx()
     # # Tracks
     # for track in local_tracks:
-    #     xtrack = obsea.track2xarr(track)
-    #     xtrack -= obs_location
-    #     xtrack *= np.exp(1j*np.deg2rad(obs_orientation))
-    #     xtrack["time"] = pd.to_datetime(xtrack["time"].values, unit="s")
-    #     xtrack = xtrack.interp_like(dtc_chunk["xor"][i])
-    #     ax.plot(xtrack["time"], np.rad2deg(
-    #         np.arctan2(xtrack.real, xtrack.imag)) % 360,
+    #     track -= obs_location
+    #     track *= np.exp(1j*np.deg2rad(obs_orientation))
+    #     track["time"] = pd.to_datetime(track["time"].values, unit="s")
+    #     track = track.interp_like(dtc_chunk["xor"][i])
+    #     ax.plot(track["time"], np.rad2deg(
+    #         np.arctan2(track.real, track.imag)) % 360,
     #         color="black", ls=":")
     #     ax_right.plot(
-    #         xtrack["time"], np.abs(xtrack) / 1000,
+    #         track["time"], np.abs(track) / 1000,
     #         color="black", ls="--")
     # Detection segments
     ax.fill_between(

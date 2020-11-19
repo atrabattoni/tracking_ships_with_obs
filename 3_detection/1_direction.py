@@ -27,8 +27,8 @@ n_azimuth = 361
 endpoint = True
 
 # Load data
-st = read("waveforms.mseed")
-inventory = read_inventory("inventory.xml")
+st = read("../data/waveforms.mseed")
+inventory = read_inventory("../data/inventory.xml")
 st.attach_response(inventory)
 
 # Prepocessing
@@ -50,5 +50,5 @@ peaks[seuil <= 0] = np.nan
 peaks *= ell["azimuth"][1]
 
 # Save
-peaks.to_netcdf("a.nc")
-ell.to_netcdf("ell_a.nc")
+peaks.to_netcdf("../data/a.nc")
+ell.to_netcdf("../data/ell_a.nc")

@@ -14,10 +14,10 @@ st = st.trim(
     nearest_sample=False
 )
 
-st.write("waveforms.mseed")
+st.write("../data/waveforms.mseed")
 
 inventory = client.get_stations(
     network="YV", station="RR03",
     starttime=starttime, endtime=endtime,
     level="response")
-inventory.write("inventory.xml", format="stationxml")
+inventory.write("../data/inventory.xml", format="stationxml")

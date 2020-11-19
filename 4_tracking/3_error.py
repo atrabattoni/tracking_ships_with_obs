@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-tracks = pd.read_pickle("tracks.pkl")
-lines = pd.read_pickle("lines.pkl")
+tracks = pd.read_pickle("../data/tracks.pkl")
+lines = pd.read_pickle("../data/lines.pkl")
 
 lines["cpa_distance"] = np.abs(lines["cpa_distance"])
 lines["speed_heading"] = (np.rad2deg(lines["speed_heading"]) + 77) % 360

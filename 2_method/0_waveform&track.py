@@ -12,7 +12,7 @@ radius = 70_000.0
 n_ship = 1
 
 # Load station
-inventory = read_inventory("inventory.xml")
+inventory = read_inventory("../data/inventory.xml")
 network, = inventory
 station, = network
 

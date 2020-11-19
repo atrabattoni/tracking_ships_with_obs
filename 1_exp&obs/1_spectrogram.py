@@ -25,7 +25,7 @@ chunks = [x.sel(time=slice(date_range[i], date_range[i + 1]))
           for i in range(N)]
 
 # Plot
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(nrows=N, figsize=(7.1, 3), 
     gridspec_kw=dict(
         hspace=0.11, wspace=0.0, 
@@ -51,4 +51,4 @@ axes[-1].set_xticklabels(
      "00:00", "06:00", "12:00", "18:00",
      "00:00"])
 axes[N // 2].set_ylabel("Frequency [Hz]")
-fig.savefig("figs/spectrogram.pdf")
+fig.savefig("../figs/spectrogram.pdf")

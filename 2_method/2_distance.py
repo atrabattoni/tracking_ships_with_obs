@@ -31,8 +31,8 @@ ell0 = xr.open_dataarray(
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
-st = read("method_waveforms.mseed")
-inventory = read_inventory("inventory.xml")
+st = read("../data/waveform.mseed")
+inventory = read_inventory("../data/inventory.xml")
 st.attach_response(inventory)
 st = st.select(channel="BDH")
 
@@ -70,10 +70,9 @@ loglik = np.log(ell.mean("speed"))
 # Load AIS
 with open("method_track.pkl", "rb") as file:
     track = pickle.load(file)
-xtrack = obsea.track2xarr(track)
-xtrack -= reference
-xtrack = xtrack.interp_like(ceps)
-rtrack = np.abs(xtrack)
+track -= reference
+track = track.interp_like(ceps)
+rtrack = np.abs(track)
 
 ceps["time"] = pd.to_datetime(ceps["time"].values, unit="s")
 loglik["time"] = pd.to_datetime(loglik["time"].values, unit="s")
@@ -83,7 +82,7 @@ rtrack["time"] = pd.to_datetime(rtrack["time"].values, unit="s")
 
 # %% PLOT
 
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(3, 1, sharex=True, figsize=(3.4, 3.4), gridspec_kw=dict(
     hspace=0.1, wspace=0.0,
     left=0.12, right=1.0,
@@ -122,6 +121,6 @@ ax.set_xlim(
 )
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-fig.savefig("figs/method_distance.pdf")
+fig.savefig("../figs/method_distance.pdf")
 
 # %%

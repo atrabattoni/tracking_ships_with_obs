@@ -19,36 +19,35 @@ with open("segments.pkl", "rb") as file:
 lines = pd.read_pickle("lines.pkl")
 
 # Load loglik
-loglik_a = np.log(0.1 + 0.9 * xr.open_dataarray("ell_a.nc"))
-loglik_r = np.log(0.4 + 0.6 * xr.open_dataarray("ell_r.nc"))
+loglik_a = np.log(0.1 + 0.9 * xr.open_dataarray("../data/ell_a.nc"))
+loglik_r = np.log(0.4 + 0.6 * xr.open_dataarray("../data/ell_r.nc"))
 
 # Load tracks
-tracks = pd.read_pickle("tracks.pkl")
-xtracks = tracks["linestring"].apply(obsea.track2xarr)
-xtracks_interp = xtracks.apply(lambda xarr: xarr.interp_like(loglik_a["time"]))
-atracks = xtracks.apply(lambda xarr: (np.rad2deg(
+tracks = pd.read_pickle("../data/tracks.pkl")
+tracks_interp = tracks.apply(lambda xarr: xarr.interp_like(loglik_a["time"]))
+atracks = tracks.apply(lambda xarr: (np.rad2deg(
     np.arctan2(xarr.real, xarr.imag)) - 77) % 360)
-atracks_interp = xtracks_interp.apply(lambda xarr: (np.rad2deg(
+atracks_interp = tracks_interp.apply(lambda xarr: (np.rad2deg(
     np.arctan2(xarr.real, xarr.imag)) - 77) % 360)
-rtracks = xtracks.apply(lambda xarr: np.abs(xarr))
-rtracks_interp = xtracks_interp.apply(lambda xarr: np.abs(xarr))
+rtracks = tracks.apply(lambda xarr: np.abs(xarr))
+rtracks_interp = tracks_interp.apply(lambda xarr: np.abs(xarr))
 
 
 def plot(fig, cell, nsegment, ntrack):
     segment = segments[nsegment]
     line = lines.loc[ntrack]
-    xtrack = xtracks.loc[ntrack]
-    xtrack_interp = xtracks_interp.loc[ntrack]
+    track = tracks.loc[ntrack]
+    track_interp = tracks_interp.loc[ntrack]
     atrack = atracks.loc[ntrack]
     atrack_interp = atracks_interp.loc[ntrack]
     rtrack = rtracks.loc[ntrack]
     rtrack_interp = rtracks_interp.loc[ntrack]
-    t = pd.to_datetime(xtrack["time"].values, unit="s")
-    t_interp = pd.to_datetime(xtrack_interp["time"].values, unit="s")
+    t = pd.to_datetime(track["time"].values, unit="s")
+    t_interp = pd.to_datetime(track_interp["time"].values, unit="s")
     t_ais = utils.select_segment(
-        xtrack, segment, convert="posix")["time"].values
+        track, segment, convert="posix")["time"].values
     t_line = utils.select_segment(
-        xtrack_interp, segment, convert="posix")["time"].values
+        track_interp, segment, convert="posix")["time"].values
     la = utils.select_segment(loglik_a, segment, convert="posix")
     lr = utils.select_segment(loglik_r, segment, convert="posix")
    
@@ -112,9 +111,9 @@ def plot(fig, cell, nsegment, ntrack):
     ax.add_artist(circle50)
     ax.add_artist(circle100)
     ax.plot(0, 0, "*", mec="black", mfc="white", ms=5)
-    ax.plot(xtrack.real / 1000, xtrack.imag / 1000,
+    ax.plot(track.real / 1000, track.imag / 1000,
             marker="o", c="black", mfc="none", ls="", ms=2)
-    ax.plot(xtrack_interp.real / 1000, xtrack_interp.imag / 1000,
+    ax.plot(track_interp.real / 1000, track_interp.imag / 1000,
             c="black", ls="-.")
     ax.plot(x / 1000, y / 1000, "C2")
     ax.plot(x_ais / 1000, y_ais / 1000, "C2",
@@ -128,7 +127,7 @@ def plot(fig, cell, nsegment, ntrack):
 
 
 ntracks = [1, 2, 3, 4, 5, 6, 8, 10, 11]
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig = plt.figure(figsize=(7.1, 5.5))
 outer_grid = fig.add_gridspec(5, 2,
     hspace=0.25, wspace=0.15,
@@ -146,4 +145,4 @@ for i in range(5):
             k += 1
         except IndexError:
             pass
-fig.savefig("figs/tracking.pdf")
+fig.savefig("../figs/tracking.pdf")

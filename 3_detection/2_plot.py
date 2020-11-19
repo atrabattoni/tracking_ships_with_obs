@@ -13,32 +13,31 @@ date_range = pd.date_range("2013-05-21", "2013-05-27", freq="2D")
 N = len(date_range) - 1
 
 # Load detections
-a = xr.open_dataarray("a.nc")
-r = xr.open_dataarray("r.nc")
-v = xr.open_dataarray("v.nc")
+a = xr.open_dataarray("../data/a.nc")
+r = xr.open_dataarray("../data/r.nc")
+v = xr.open_dataarray("../data/v.nc")
 t = pd.to_datetime(a["time"].values, unit="s")
 
 # Load tracks
-tracks = pd.read_pickle("tracks.pkl")
-xtracks = tracks["linestring"].apply(obsea.track2xarr)
-xtracks = xtracks.apply(lambda xarr: xarr.interp_like(a["time"]))
-atracks = xtracks.apply(lambda xarr: (np.rad2deg(
+tracks = pd.read_pickle("../data/tracks.pkl")
+tracks = tracks.apply(lambda xarr: xarr.interp_like(a["time"]))
+atracks = tracks.apply(lambda xarr: (np.rad2deg(
     np.arctan2(xarr.real, xarr.imag)) - 77) % 360)
-rtracks = xtracks.apply(lambda xarr: np.abs(xarr))
+rtracks = tracks.apply(lambda xarr: np.abs(xarr))
 
 # # Load loglik
 # ell_a = xr.open_dataarray("ell_a.nc")
 # ell_r = xr.open_dataarray("ell_r.nc")
 
 # Load segments
-with open("dtc.pkl", "rb") as file:
+with open("../data/dtc.pkl", "rb") as file:
     dtc = pickle.load(file)
-with open("segments.pkl", "rb") as file:
+with open("../data/segments.pkl", "rb") as file:
     segments = pickle.load(file)
 
 
 # Plot
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 blank = 0.2
 bar = 0.07
 fig, axes = plt.subplots(nrows=11, figsize=(7.1, 5),
@@ -111,4 +110,4 @@ ax.set_xticklabels(
     ["00:00", "06:00", "12:00", "18:00",
      "00:00", "06:00", "12:00", "18:00",
      "00:00"])
-fig.savefig("figs/detection.pdf")
+fig.savefig("../figs/detection.pdf")

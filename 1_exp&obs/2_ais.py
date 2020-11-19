@@ -20,7 +20,7 @@ rr03, = network.select(station="RR03")
 projection = ccrs.PlateCarree()
 
 # Build Frame
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig, ax = plt.subplots(
     subplot_kw=dict(projection=projection),
     gridspec_kw=dict(
@@ -92,4 +92,4 @@ ax.xaxis.set_major_formatter(eastfmt)
 ax.yaxis.set_major_formatter(southfmt)
 ax.tick_params(direction="in", which="both")
 
-fig.savefig("figs/ais.pdf")
+fig.savefig("../figs/ais.pdf")

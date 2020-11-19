@@ -59,7 +59,7 @@ tdoa.loc[{"distance": slice(50000, None)}] = np.nan
 output.loc[{"distance": slice(50000, None)}] = 0
 
 # Plot
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(
     nrows=2, sharex=True, sharey=True, figsize=(3.4, 3.4), gridspec_kw=dict(
         hspace=0.06, wspace=0.0,
@@ -91,4 +91,4 @@ ax.set_xlim(0, 60)
 ax.set_ylim(0, 7)
 ax.set_yticks(np.arange(8))
 
-fig.savefig("figs/data_model.pdf")
+fig.savefig("../figs/data_model.pdf")

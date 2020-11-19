@@ -33,16 +33,15 @@ endpoint = True
 # %% Load data
 
 # Seimological
-st = read("method_waveforms.mseed")
+st = read("../data/waveform.mseed")
 inventory = read_inventory("inventory.xml")
 st.attach_response(inventory)
 
 # AIS
-with open("method_track.pkl", "rb") as file:
+with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
-xtrack = obsea.track2xarr(track)
-xtrack -= obs_location
-xtrack *= np.exp(1j*np.deg2rad(obs_orientation))
+track -= obs_location
+track *= np.exp(1j*np.deg2rad(obs_orientation))
 
 # Prepocessing
 tf = obsea.time_frequency(
@@ -55,7 +54,7 @@ u = az.sel(frequency=slice(fmin, fmax))
 # %% Tonal detection
 ell = obsea.tonal_detection(
     u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t_step=t_step)
-xtrack = xtrack.interp_like(ell)
+track = track.interp_like(ell)
 
 seuil = np.log(ell.mean("azimuth"))
 peaks = ell.argmax("azimuth").astype(float)
@@ -64,12 +63,12 @@ peaks *= ell["azimuth"][1]
 
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 peaks["time"] = pd.to_datetime(peaks["time"].values, unit="s")
-xtrack["time"] = pd.to_datetime(xtrack["time"].values, unit="s")
+track["time"] = pd.to_datetime(track["time"].values, unit="s")
 az["time"] = pd.to_datetime(az["time"].values, unit="s")
 
 
 # %% Plot
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 
 fig, axes = plt.subplots(2, sharex=True, gridspec_kw=dict(
     hspace=0.08, wspace=0.0,
@@ -94,8 +93,8 @@ img = ax.pcolormesh(ell["time"], ell["azimuth"], np.log(ell.T),
 fig.colorbar(img, ax=ax, pad=0.01, label="Log-likelihood")
 ax.plot(peaks["time"], peaks,
         ls="", marker="s", ms=2, mfc="none", mec="C2", label="detection")
-ax.plot(xtrack["time"], np.rad2deg(
-    np.arctan2(xtrack.real, xtrack.imag)) % 360, "black", ls="-.", label="AIS")
+ax.plot(track["time"], np.rad2deg(
+    np.arctan2(track.real, track.imag)) % 360, "black", ls="-.", label="AIS")
 ax.set_ylim(0, 360)
 ax.yaxis.set_major_locator(MultipleLocator(60))
 ax.yaxis.set_minor_locator(MultipleLocator(10))
@@ -107,6 +106,6 @@ ax.set_xlim(
     np.datetime64("2012-11-27T10:00:00"),
 )
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-fig.savefig("figs/method_direction.pdf")
+fig.savefig("../figs/method_direction.pdf")
 
 # %%

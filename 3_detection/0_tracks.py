@@ -23,7 +23,7 @@ cpa = 25_000.0
 radius = 100_000.0
 
 # Load OBS
-station = read_inventory("inventory.xml")[0][0]
+station = read_inventory("../data/inventory.xml")[0][0]
 obs = Point(obs_location.real, obs_location.imag)
 
 # Load AIS
@@ -92,4 +92,4 @@ tracks = tracks.reset_index()
 tracks.index += 1
 
 # Save
-tracks.to_pickle("tracks.pkl")
+tracks.to_pickle("..data/tracks.pkl")

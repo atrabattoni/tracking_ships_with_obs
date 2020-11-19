@@ -4,7 +4,7 @@ import xarray as xr
 from scipy.stats import skewnorm
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
-plt.style.use("figures.mplstyle")
+plt.style.use("../figures.mplstyle")
 
 # %% TDOA Models
 N = 3
@@ -74,7 +74,7 @@ ax.set_ylabel("Distance [km]")
 ax.set_xticks([-2, -1, 0, 1, 2])
 ax.set_xticklabels(["-2:00", "-1:00", "0:00", "1:00", "2:00"])
 fig.tight_layout()
-fig.savefig("figs/branch_association.pdf")
+fig.savefig("../figs/branch_association.pdf")
 # %%
 
 # %%

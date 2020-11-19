@@ -25,8 +25,8 @@ tdoa = xr.open_dataarray(
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
-st = read("waveforms.mseed")
-inventory = read_inventory("inventory.xml")
+st = read("../data/waveforms.mseed")
+inventory = read_inventory("../data/inventory.xml")
 st.attach_response(inventory)
 st = st.select(channel="BDH")
 
@@ -53,10 +53,10 @@ ell_r = ell.mean("speed")
 ell_rm = ell.sel(speed=slice(None, 0)).mean("speed")
 ell_rp = ell.sel(speed=slice(0, None)).mean("speed")
 
-r.to_netcdf("r.nc")
-v.to_netcdf("v.nc")
-ell.to_netcdf("ell_rv.nc")
-ell_r.to_netcdf("ell_r.nc")
-ell_rm.to_netcdf("ell_rm.nc")
-ell_rp.to_netcdf("ell_rp.nc")
+r.to_netcdf("../data/r.nc")
+v.to_netcdf("../data/v.nc")
+ell.to_netcdf("../data/ell_rv.nc")
+ell_r.to_netcdf("../data/ell_r.nc")
+ell_rm.to_netcdf("../data/ell_rm.nc")
+ell_rp.to_netcdf("../data/ell_rp.nc")
 
