@@ -8,7 +8,7 @@ client = Client("RESIF")
 inventory = read_inventory("../data/RR03.xml")
 
 # Method
-with open("track.pkl", "rb") as file:
+with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
 station = inventory[0][0]
 st = obsea.load_stream(track, client, inventory, station, '*')
