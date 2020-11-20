@@ -1,3 +1,4 @@
+import pandas as pd
 import pickle
 
 import obsea
@@ -32,5 +33,16 @@ fname = obsea.get_dataset_path(dataset)
 ais = obsea.read_cls(fname)
 tracks = obsea.read_ais(ais, timedelta)
 tracks = obsea.select_tracks(tracks, station, radius, cpa)
+
+# sort by cpa time
+cpa_time = tracks.apply(lambda track: obsea.get_cpa(track)["time"].values[0])
+mask = (
+    (np.datetime64('2013-05-21') <= cpa_time) & 
+    (cpa_time < np.datetime64('2013-05-28'))
+)
+tracks = tracks[mask]
+cpa_time = cpa_time[mask]
+cpa_time = cpa_time.sort_values()
+tracks = tracks[cpa_time.index]
 
 tracks.to_pickle("../data/tracks.pkl")
