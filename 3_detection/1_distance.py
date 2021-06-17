@@ -17,11 +17,11 @@ grid = {
     "vmax": 13.0,
 }
 mu = xr.open_dataarray(
-    "/Users/alister/Desktop/PhD/thesis/src/bayes/data/mu_model.nc")
+    "../data/mu_model.nc")
 sigma = xr.open_dataarray(
-    "/Users/alister/Desktop/PhD/thesis/src/bayes/data/sigma_model.nc")
+    "../data/sigma_model.nc")
 tdoa = xr.open_dataarray(
-    "/Users/alister/Desktop/PhD/thesis/src/bayes/data/tdoa_november.nc").T
+    "../data/tdoa_november.nc").T
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
