@@ -34,7 +34,7 @@ endpoint = True
 
 # Seimological
 st = read("../data/waveform.mseed")
-inventory = read_inventory("inventory.xml")
+inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 
 # AIS
@@ -52,20 +52,19 @@ u = az.sel(frequency=slice(fmin, fmax))
 
 
 # %% Tonal detection
-ell = obsea.tonal_detection(
-    u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t_step=t_step)
+_u = u.copy()
+_u["time"] = (_u["time"] - np.datetime64(1, "s")) / np.timedelta64(1, "s")
+_ell = obsea.tonal_detection(
+    _u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t_step=t_step)
+ell = _ell.copy()
+ell["time"] = (1e9 * ell["time"]).astype("datetime64[ns]")
+
 track = track.interp_like(ell)
 
 seuil = np.log(ell.mean("azimuth"))
 peaks = ell.argmax("azimuth").astype(float)
 peaks[seuil <= 0] = np.nan
 peaks *= ell["azimuth"][1]
-
-ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
-peaks["time"] = pd.to_datetime(peaks["time"].values, unit="s")
-track["time"] = pd.to_datetime(track["time"].values, unit="s")
-az["time"] = pd.to_datetime(az["time"].values, unit="s")
-
 
 # %% Plot
 plt.style.use("../figures.mplstyle")
@@ -88,7 +87,7 @@ ax.set_ylabel("Frequency [Hz]")
 
 # Log-Likelihood
 ax = axes[1]
-img = ax.pcolormesh(ell["time"], ell["azimuth"], np.log(ell.T),
+img = ax.pcolormesh(ell["time"].values, ell["azimuth"].values, np.log(ell.T.values),
                     vmin=-40, vmax=40, cmap=cc.coolwarm, rasterized=True)
 fig.colorbar(img, ax=ax, pad=0.01, label="Log-likelihood")
 ax.plot(peaks["time"], peaks,
@@ -107,5 +106,3 @@ ax.set_xlim(
 )
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 fig.savefig("../figs/method_direction.pdf")
-
-# %%
