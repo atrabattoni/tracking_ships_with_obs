@@ -52,10 +52,17 @@ def process(ship):
 
     track = track.interp_like(ceps)
 
-    delayer = obsea.make_delay(track)
+    
+    _track = track.copy()
+    _track["time"] = (_track["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
+
+    _ceps = ceps.copy()
+    _ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
+
+    delayer = obsea.make_delay(_track)
     xp = np.linspace(-750, 750, 61)
     yp = np.linspace(0, 750, 31)
-    beamform = obsea.make_beamform(xp, yp, ceps, delayer)
+    beamform = obsea.make_beamform(xp, yp, _ceps, delayer)
     image = np.abs(beamform(1502, 4340))
     i, j = np.unravel_index(np.argmax(image.values), image.shape)
     x, y = xp[j], yp[i]
@@ -108,12 +115,10 @@ def process(ship):
 C = {}
 for k in [1, 3, 10, 16, 23, 30, 31, 32, 33, 35]:
     print(k)
-    try:
-        C[str(k)+"_coming"], C[str(k)+"_leaving"] = process(k)
-    except:
-        continue
+    C[str(k)+"_coming"], C[str(k)+"_leaving"] = process(k)
+
 ds = xr.Dataset(C)
-ds.to_netcdf("data.nc")
+# ds.to_netcdf("data.nc")
 
 std = (0.625 + np.cos(np.pi*q/q.max()) / 5) / np.sqrt(nperseg)
 std = xr.DataArray(
@@ -126,4 +131,4 @@ x = (x / std)**2
 mean = x.mean("variable")
 mu = np.sqrt(mean - 2) * std
 mu.values = np.nan_to_num(mu.values)
-mu.to_netcdf("..data/mu.nc")
+mu.to_netcdf("../data/mu.nc")
