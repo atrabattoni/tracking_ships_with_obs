@@ -41,8 +41,12 @@ u = az.sel(frequency=slice(fmin, fmax))
 # Tonal detection
 t = pd.date_range("2013-05-21", "2013-05-27", freq="1 min")
 t = (t - pd.Timestamp(0)) / pd.Timedelta(1, "s")
-ell = obsea.tonal_detection(
-    u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t=t)
+_u = u.copy()
+_u["time"] = (_u["time"] - np.datetime64(1, "s")) / np.timedelta64(1, "s")
+_ell = obsea.tonal_detection(
+    _u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t=t)
+ell = _ell.copy()
+ell["time"] = (1e9 * ell["time"]).astype("datetime64[ns]")
 
 seuil = np.log(ell.mean("azimuth"))
 peaks = ell.argmax("azimuth").astype(float)
