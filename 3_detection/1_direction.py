@@ -28,7 +28,7 @@ endpoint = True
 
 # Load data
 st = read("../data/waveforms.mseed")
-inventory = read_inventory("../data/inventory.xml")
+inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 
 # Prepocessing

@@ -32,7 +32,7 @@ model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
 st = read("../data/waveform.mseed")
-inventory = read_inventory("../data/inventory.xml")
+inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 st = st.select(channel="BDH")
 
