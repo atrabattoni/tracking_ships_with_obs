@@ -9,9 +9,9 @@ plt.style.use("../figures.mplstyle")
 # %% TDOA Models
 N = 3
 r = np.loadtxt(
-    "/Users/alister/Desktop/PhD/thesis/src//ray-tracing/data/r.csv")
+    "../inputs/r.csv")
 toa = np.loadtxt(
-    "/Users/alister/Desktop/PhD/thesis/src//ray-tracing/data/tau.csv", delimiter=",")[:, :N+1]
+    "../inputs/tau.csv", delimiter=",")[:, :N+1]
 tdoa = np.diff(toa, axis=-1)
 
 f = [interp1d(
@@ -75,6 +75,3 @@ ax.set_xticks([-2, -1, 0, 1, 2])
 ax.set_xticklabels(["-2:00", "-1:00", "0:00", "1:00", "2:00"])
 fig.tight_layout()
 fig.savefig("../figs/branch_association.pdf")
-# %%
-
-# %%
