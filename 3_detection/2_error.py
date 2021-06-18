@@ -92,8 +92,27 @@ smad_v = 1.4826 * np.abs(diff_truncated_v).median("time")
 count_a = cond_a.apply(np.count_nonzero)
 count_rv = cond_rv.apply(np.count_nonzero)
 
-# Save to disk
-# smad_a.to_netcdf("smad_azimuth.nc")
-# smad_r.to_netcdf("smad_range.nc")
-# smad_v.to_netcdf("smad_speed.nc")
+# Format
+smad_a = [smad_a[key].values.item() for key in smad_a]
+smad_r = [smad_r[key].values.item() for key in smad_r]
+smad_v = [smad_v[key].values.item() for key in smad_v]
+count_a = [count_a[key].values.item() for key in count_a]
+count_rv = [count_rv[key].values.item() for key in count_rv]
 
+df = pd.DataFrame()
+df["Na"] = count_a
+df["Heading"] = np.round(smad_a, 1)
+df["Nr"] = count_rv
+df["Distance"] = np.round(smad_r, 0)
+df["Speed"] = np.round(smad_v, 2)
+df.index += 1
+df.to_excel("../data/detection_errors.xlsx")
+
+
+
+df = pd.DataFrame({
+    "Heading": [smad_ag.values.item()],
+    "Distance": [smad_rg.values.item()],
+    "Speed": [smad_vg.values.item()],
+})
+df.to_excel("../data/detection_general_errors.xlsx")
