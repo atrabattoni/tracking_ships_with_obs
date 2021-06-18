@@ -14,20 +14,16 @@ nperseg = 1024
 step = 512
 nsigma = 2
 grid = {
-    "dt": 180,
-    "dr": 70,
-    "rmax": 50_000,
+    "dt": 180.0,
+    "dr": 70.0,
+    "rmax": 50_000.0,
     "dv": 0.5,
-    "vmax": 13,
+    "vmax": 13.0,
 }
-mu = xr.open_dataarray(
-    "../data/mu_model.nc")
-sigma = xr.open_dataarray(
-    "../data/sigma_model.nc")
-tdoa = xr.open_dataarray(
-    "../data/tdoa_november.nc").T
-ell0 = xr.open_dataarray(
-    "../data/ell.nc").T
+mu = xr.open_dataarray("../inputs/mu_model.nc")
+sigma = xr.open_dataarray("../inputs/sigma_model.nc")
+tdoa = xr.open_dataarray("../inputs/tdoa_november.nc").T
+
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
@@ -52,9 +48,14 @@ logell = xr.DataArray(
     dims=("interference", "distance", "time")
 )
 
-ell = obsea.cepstral_detection(
-    ceps, model, grid["dr"], grid["rmax"], grid["dv"], grid["vmax"],
+_ceps = ceps.copy()
+_ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / \
+    np.timedelta64(1, "s")
+_ell = obsea.cepstral_detection(
+    _ceps, model, grid["dr"], grid["rmax"], grid["dv"], grid["vmax"],
     nsigma, grid["dt"], t_step=60)
+ell = _ell.copy()
+ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 marginal = ell.mean(["distance", "speed"])
 mask = marginal > 1.0
 
@@ -68,17 +69,11 @@ ceps = np.abs(obsea.analytic_signal(ceps))
 loglik = np.log(ell.mean("speed"))
 
 # Load AIS
-with open("method_track.pkl", "rb") as file:
+with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
 track -= reference
 track = track.interp_like(ceps)
 rtrack = np.abs(track)
-
-ceps["time"] = pd.to_datetime(ceps["time"].values, unit="s")
-loglik["time"] = pd.to_datetime(loglik["time"].values, unit="s")
-r["time"] = pd.to_datetime(r["time"].values, unit="s")
-rtrack["time"] = pd.to_datetime(rtrack["time"].values, unit="s")
-
 
 # %% PLOT
 
@@ -99,17 +94,17 @@ ax = axes[1]
 img = ax.pcolormesh(loglik["time"], loglik["distance"]/1000, loglik.T,
                     vmin=-200, vmax=200, cmap="cet_diverging_bwr_40_95_c42",
                     rasterized=True)
-fig.colorbar(img, ax=ax, label="Log-likelihood", pad=0.02, ticks=[-200, 0, 200])
+fig.colorbar(img, ax=ax, label="Log-likelihood",
+             pad=0.02, ticks=[-200, 0, 200])
 ax.set_ylim(0, 50)
 ax.set_yticks([0, 25, 50])
 ax.set_ylabel("Distance [km]")
 
 # Peaks
 ax = axes[2]
-sc = ax.scatter(r["time"], r/1000, marker="s", s=4, fc="none",
-                c=v*1.943844, linewidths=0.5, label="detection", cmap="cet_diverging_gwr_55_95_c38")
-fig.colorbar(sc, ax=ax, label="Speed [knots]", pad=0.02,
-             ticks=[-25, 0, 25])
+sc = ax.scatter(r["time"], r.values/1000, marker="s", s=4, c=v.values*1.943844,
+                linewidths=0.5, label="detection", cmap="cet_diverging_gwr_55_95_c38")
+fig.colorbar(sc, ax=ax, label="Speed [knots]", pad=0.02, ticks=[-25, 0, 25])
 ax.plot(rtrack["time"], rtrack/1000, "black", ls="-.", label="AIS")
 ax.set_ylim(0, 50)
 ax.set_yticks([0, 25, 50])
@@ -122,5 +117,3 @@ ax.set_xlim(
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
 fig.savefig("../figs/method_distance.pdf")
-
-# %%
