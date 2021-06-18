@@ -8,11 +8,9 @@ N = 3
 sigma = 0.05
 
 # Load data
-mu = xr.open_dataarray(
-    "/Users/alister/Desktop/PhD/thesis/src/warp/mu.nc")
-r = np.loadtxt("/Users/alister/Desktop/PhD/thesis/src/ray-tracing/data/r.csv")
-tau = np.loadtxt(
-    "/Users/alister/Desktop/PhD/thesis/src/ray-tracing/data/tau.csv", delimiter=",")
+mu = xr.open_dataarray( "../data/mu.nc")
+r = np.loadtxt("../inputs/r.csv", delimiter=",")
+tau = np.loadtxt( "../inputs/tau.csv", delimiter=",")
 
 # Compute TDOA
 toa = xr.DataArray(
