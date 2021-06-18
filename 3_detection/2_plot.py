@@ -25,16 +25,11 @@ atracks = tracks.apply(lambda xarr: (np.rad2deg(
     np.arctan2(xarr.real, xarr.imag)) - 77) % 360)
 rtracks = tracks.apply(lambda xarr: np.abs(xarr))
 
-# # Load loglik
-# ell_a = xr.open_dataarray("ell_a.nc")
-# ell_r = xr.open_dataarray("ell_r.nc")
-
 # Load segments
 with open("../data/dtc.pkl", "rb") as file:
     dtc = pickle.load(file)
 with open("../data/segments.pkl", "rb") as file:
     segments = pickle.load(file)
-
 
 # Plot
 plt.style.use("../figures.mplstyle")
@@ -49,8 +44,6 @@ fig, axes = plt.subplots(nrows=11, figsize=(7.1, 5),
 ))
 for i in range(N):
     ax = axes[4*i]
-    # ax.pcolormesh(t, ell_a["azimuth"], np.log(ell_a).T,
-    #               cmap="binary", vmin=0, vmax=20, rasterized=True)
     ax.scatter(t, a, marker="s", s=4, fc="none", ec="C4", linewidth=0.5)
     for atrack in atracks:
         ax.plot(t, atrack, c="black", ls="-.")
@@ -83,9 +76,7 @@ for i in range(N):
         ax.axvline(segment[2], c="C3", ls=":")
 
     ax = axes[4*i + 2]
-    # ax.pcolormesh(t, ell_r["distance"]/1000, np.log(ell_r).T,
-    #               cmap="binary", vmin=0, vmax=100, rasterized=True)
-    ax.scatter(t, r/1000, marker="s", s=4, fc="none", c=v*1.943844,
+    ax.scatter(t, r/1000, marker="s", s=4, c=v*1.943844,
                linewidth=0.5, cmap="cet_diverging_gwr_55_95_c38")
     for rtrack in rtracks:
         ax.plot(t, rtrack/1000, c="black", ls="-.")
@@ -110,4 +101,5 @@ ax.set_xticklabels(
     ["00:00", "06:00", "12:00", "18:00",
      "00:00", "06:00", "12:00", "18:00",
      "00:00"])
+
 fig.savefig("../figs/detection.pdf")

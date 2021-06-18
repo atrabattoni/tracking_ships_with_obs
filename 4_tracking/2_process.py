@@ -23,11 +23,15 @@ def process(segment, ntrack, data):
 
     # Segment slicing
     t_cpa = utils.to_posix(segment[1])
-    ell = utils.select_segment(data, segment, convert="posix")
+
+    ell = utils.select_segment(data, segment)
     ell = utils.detection_probability(ell, Pd)
 
+    _ell = ell.copy()
+    _ell["time"] = (_ell["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
+
     # Line Fitting
-    loglik = np.log(utils.smooth(ell, 14, 10, 1))  # 14 km, 5°, 0.5 m/s
+    loglik = np.log(utils.smooth(_ell, 14, 10, 1))  # 14 km, 5°, 0.5 m/s
     brute_force = utils.make_brute_force(loglik)
 
     # Coarse
@@ -78,12 +82,12 @@ def process(segment, ntrack, data):
 
 # Load likelihood
 data = xr.Dataset({
-    "a": xr.open_dataarray("ell_a.nc"),
-    "r": xr.open_dataarray("ell_rv.nc"),
+    "a": xr.open_dataarray("../data/ell_a.nc"),
+    "r": xr.open_dataarray("../data/ell_rv.nc"),
 })
 
 # Load segments
-with open("segments.pkl", "rb") as file:
+with open("../data/segments.pkl", "rb") as file:
     segments = pickle.load(file)
 
 ntracks = [1, 2, 3, 4, 5, 6, 8, 10, 11]
@@ -96,4 +100,4 @@ with ProgressBar():
 
 result = pd.concat([pd.DataFrame(res) for res in results])
 result = result.set_index("ntrack")
-result.to_pickle("lines.pkl")
+result.to_pickle("../data/lines.pkl")

@@ -12,11 +12,12 @@ from colorcet import cm as cc
 import utils
 
 # Load segments
-with open("segments.pkl", "rb") as file:
+with open("../data/segments.pkl", "rb") as file:
     segments = pickle.load(file)
 
 # Load lines
-lines = pd.read_pickle("lines.pkl")
+lines = pd.read_pickle("../data/lines.pkl")
+ntracks = lines.index.to_list()
 
 # Load loglik
 loglik_a = np.log(0.1 + 0.9 * xr.open_dataarray("../data/ell_a.nc"))
@@ -33,35 +34,38 @@ rtracks = tracks.apply(lambda xarr: np.abs(xarr))
 rtracks_interp = tracks_interp.apply(lambda xarr: np.abs(xarr))
 
 
-def plot(fig, cell, nsegment, ntrack):
+def plot(fig, cell, nsegment, k, ntrack):
     segment = segments[nsegment]
     line = lines.loc[ntrack]
-    track = tracks.loc[ntrack]
-    track_interp = tracks_interp.loc[ntrack]
-    atrack = atracks.loc[ntrack]
-    atrack_interp = atracks_interp.loc[ntrack]
-    rtrack = rtracks.loc[ntrack]
-    rtrack_interp = rtracks_interp.loc[ntrack]
-    t = pd.to_datetime(track["time"].values, unit="s")
-    t_interp = pd.to_datetime(track_interp["time"].values, unit="s")
+    track = tracks.iloc[ntrack-1]
+    track_interp = tracks_interp.iloc[ntrack-1]
+    atrack = atracks.iloc[ntrack-1]
+    atrack_interp = atracks_interp.iloc[ntrack-1]
+    rtrack = rtracks.iloc[ntrack-1]
+    rtrack_interp = rtracks_interp.iloc[ntrack-1]
+    t = track["time"]
+    t_interp = track_interp["time"]
     t_ais = utils.select_segment(
-        track, segment, convert="posix")["time"].values
+        track, segment)["time"].values
     t_line = utils.select_segment(
-        track_interp, segment, convert="posix")["time"].values
-    la = utils.select_segment(loglik_a, segment, convert="posix")
-    lr = utils.select_segment(loglik_r, segment, convert="posix")
-   
+        track_interp, segment)["time"].values
+    la = utils.select_segment(loglik_a, segment)
+    lr = utils.select_segment(loglik_r, segment)
+
+    _t_line = (t_line - np.datetime64(0, "s")) / (np.timedelta64(1, "s"))
     r, a, _ = utils.generate_line(line["cpa_time"], line["cpa_distance"],
-                                  line["speed_heading"], line["speed_value"], t_line)
+                                  line["speed_heading"], line["speed_value"], _t_line)
     x = r * np.sin(a + np.deg2rad(77))
     y = r * np.cos(a + np.deg2rad(77))
 
+    _t_ais = (t_ais - np.datetime64(0, "s")) / (np.timedelta64(1, "s"))
     r_ais, a_ais, _ = utils.generate_line(line["cpa_time"], line["cpa_distance"],
-                                          line["speed_heading"], line["speed_value"], t_ais)
+                                          line["speed_heading"], line["speed_value"], _t_ais)
     x_ais = r_ais * np.sin(a_ais + np.deg2rad(77))
     y_ais = r_ais * np.cos(a_ais + np.deg2rad(77))
 
-    inner_grid = cell.subgridspec(2, 2, wspace=0.05, hspace=0, width_ratios=[2.4, 1])
+    inner_grid = cell.subgridspec(
+        2, 2, wspace=0.05, hspace=0, width_ratios=[2.4, 1])
 
     # direction
     ax = fig.add_subplot(inner_grid[0, 0])
@@ -126,14 +130,13 @@ def plot(fig, cell, nsegment, ntrack):
     ax.tick_params(labelleft=False, pad=1)
 
 
-ntracks = [1, 2, 3, 4, 5, 6, 8, 10, 11]
 plt.style.use("../figures.mplstyle")
 fig = plt.figure(figsize=(7.1, 5.5))
 outer_grid = fig.add_gridspec(5, 2,
-    hspace=0.25, wspace=0.15,
-    left=0.04, right=0.99,
-    bottom=0.03, top=0.99,
-)
+                              hspace=0.25, wspace=0.15,
+                              left=0.04, right=0.99,
+                              bottom=0.03, top=0.99,
+                              )
 k = 0
 for i in range(5):
     for j in range(2):
@@ -141,7 +144,7 @@ for i in range(5):
             nsegment = k
             ntrack = ntracks[k]
             cell = outer_grid[i, j]
-            plot(fig, cell, nsegment, ntrack)
+            plot(fig, cell, nsegment, k, ntrack)
             k += 1
         except IndexError:
             pass

@@ -17,11 +17,11 @@ grid = {
     "vmax": 13.0,
 }
 mu = xr.open_dataarray(
-    "../data/mu_model.nc")
+    "../inputs/mu_model.nc")
 sigma = xr.open_dataarray(
-    "../data/sigma_model.nc")
+    "../inputs/sigma_model.nc")
 tdoa = xr.open_dataarray(
-    "../data/tdoa_november.nc").T
+    "../inputs/tdoa_november.nc").T
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
@@ -33,13 +33,21 @@ st = st.select(channel="BDH")
 # Process waveforms
 p = obsea.time_frequency(st, nperseg, step)["p"]
 ceps = obsea.cepstrogram(p)
-ceps = obsea.batch_svd_filter(ceps, 3*3600, remove_mean=False)
 
 t = pd.date_range("2013-05-21", "2013-05-27", freq="1 min")
 t = (t - pd.Timestamp(0)) / pd.Timedelta(1, "s")
-ell = obsea.cepstral_detection(
-    ceps, model, grid["dr"], grid["rmax"], grid["dv"], grid["vmax"],
+
+
+_ceps = ceps.copy()
+_ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / \
+    np.timedelta64(1, "s")
+_ceps = obsea.batch_svd_filter(_ceps, 3*3600, remove_mean=False)
+_ell = obsea.cepstral_detection(
+    _ceps, model, grid["dr"], grid["rmax"], grid["dv"], grid["vmax"],
     nsigma, grid["dt"], t=t)
+ell = _ell.copy()
+ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
+
 marginal = ell.mean(["distance", "speed"])
 mask = marginal > 1.0
 
@@ -59,4 +67,3 @@ ell.to_netcdf("../data/ell_rv.nc")
 ell_r.to_netcdf("../data/ell_r.nc")
 ell_rm.to_netcdf("../data/ell_rm.nc")
 ell_rp.to_netcdf("../data/ell_rp.nc")
-
