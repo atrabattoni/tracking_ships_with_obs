@@ -32,10 +32,10 @@ error["speed_heading"] = error["speed_heading"] % 360
 error["speed_value"] = error["speed_value"] * 1.94384
 
 df = pd.DataFrame({
-    "speed_heading": [np.round(error["speed_heading"].median() * 1.4826, 0)],
+    "cpa_distance": [np.round(error["cpa_distance"].iloc[:10].median() * 1.4826, 0)],
     "cpa_time": [np.round(error["cpa_time"].median() * 1.4826, 0)],
-    "speed_value": [np.round(error["speed_value"].iloc[:10].median() * 1.4826, 1)],
-    "cpa_distance": [np.round(error["cpa_distance"].iloc[:10].median() * 1.4826, 2)],
+    "speed_heading": [np.round(error["speed_heading"].median() * 1.4826, 1)],
+    "speed_value": [np.round(error["speed_value"].iloc[:10].median() * 1.4826, 2)],
 })
 df.to_excel("../data/track_general_errors.xlsx")
 
