@@ -5,7 +5,7 @@ tracks = pd.read_pickle("../inputs/tracks.pkl")
 lines = pd.read_pickle("../data/lines.pkl")
 
 tracks = tracks.reset_index()
-tracks.index +=1
+tracks.index += 1
 
 lines["cpa_distance"] = np.abs(lines["cpa_distance"])
 lines["speed_heading"] = (np.rad2deg(lines["speed_heading"]) + 77) % 360
@@ -31,12 +31,16 @@ error = np.abs(lines - error)
 error["speed_heading"] = error["speed_heading"] % 360
 error["speed_value"] = error["speed_value"] * 1.94384
 
-df = pd.DataFrame({
-    "cpa_distance": [np.round(error["cpa_distance"].iloc[:10].median() * 1.4826, 0)],
-    "cpa_time": [np.round(error["cpa_time"].median() * 1.4826, 0)],
-    "speed_heading": [np.round(error["speed_heading"].median() * 1.4826, 1)],
-    "speed_value": [np.round(error["speed_value"].iloc[:10].median() * 1.4826, 2)],
-})
+df = pd.DataFrame(
+    {
+        "cpa_distance": [
+            np.round(error["cpa_distance"].iloc[:10].median() * 1.4826, 0)
+        ],
+        "cpa_time": [np.round(error["cpa_time"].median() * 1.4826, 0)],
+        "speed_heading": [np.round(error["speed_heading"].median() * 1.4826, 1)],
+        "speed_value": [np.round(error["speed_value"].iloc[:10].median() * 1.4826, 2)],
+    }
+)
 df.to_excel("../data/track_general_errors.xlsx")
 
 error["cpa_distance"] = np.round(error["cpa_distance"], 0)

@@ -26,11 +26,11 @@ tracks = xr.Dataset(tracks.to_dict())
 name_dict = {key: str(k) for k, key in enumerate(tracks.keys())}
 tracks = tracks.rename(name_dict)
 obs_orientation = 77.0
-tracks *= np.exp(1j*np.deg2rad(obs_orientation))
+tracks *= np.exp(1j * np.deg2rad(obs_orientation))
 
 # Convert tracks into srange and speed and aling everybody
 atrack = np.rad2deg(np.arctan2(tracks.real, tracks.imag)) % 360
-rtrack = np.abs(tracks) 
+rtrack = np.abs(tracks)
 vtrack = np.abs(tracks).diff("time") / 60.0
 
 a, r, v, atrack, rtrack, vtrack = xr.align(a, r, v, atrack, rtrack, vtrack)
@@ -57,7 +57,7 @@ index = np.abs(diff_vg).argmin("track")
 diff_vg = diff_vg[index]
 
 # Filter out too big errors
-cond_ag = (np.abs(diff_ag) < amax)
+cond_ag = np.abs(diff_ag) < amax
 diff_truncated_ag = xr.where(cond_ag, diff_ag, np.nan)
 cond_g = (np.abs(diff_rg) < rmax) & (np.abs(diff_vg) < vmax)
 diff_truncated_rg = xr.where(cond_g, diff_rg, np.nan)
@@ -71,13 +71,13 @@ smad_vg = 1.4826 * np.abs(diff_truncated_vg).median()
 # %% Per ship error
 
 # Error
-diff_a = (a - atrack)
+diff_a = a - atrack
 diff_a = (diff_a + 180) % 360 - 180
-diff_r = (r - rtrack)
-diff_v = (v - vtrack)
+diff_r = r - rtrack
+diff_v = v - vtrack
 
 # Filter out to big errors
-cond_a = (np.abs(diff_a) < amax)
+cond_a = np.abs(diff_a) < amax
 diff_truncated_a = xr.where(cond_a, diff_a, np.nan)
 cond_rv = (np.abs(diff_r) < rmax) & (np.abs(diff_v) < vmax)
 diff_truncated_r = xr.where(cond_rv, diff_r, np.nan)
@@ -109,10 +109,11 @@ df.index += 1
 df.to_excel("../data/detection_errors.xlsx")
 
 
-
-df = pd.DataFrame({
-    "Heading": [smad_ag.values.item()],
-    "Distance": [smad_rg.values.item()],
-    "Speed": [smad_vg.values.item()],
-})
+df = pd.DataFrame(
+    {
+        "Heading": [smad_ag.values.item()],
+        "Distance": [smad_rg.values.item()],
+        "Speed": [smad_vg.values.item()],
+    }
+)
 df.to_excel("../data/detection_general_errors.xlsx")

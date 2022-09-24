@@ -11,7 +11,7 @@ inventory = read_inventory("../data/RR03.xml")
 with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
 station = inventory[0][0]
-st = obsea.load_stream(track, client, inventory, station, '*')
+st = obsea.load_stream(track, client, inventory, station, "*")
 st.write("../data/waveform.mseed")
 
 # Week

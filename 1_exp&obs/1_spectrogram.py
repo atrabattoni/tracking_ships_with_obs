@@ -20,15 +20,25 @@ p = obsea.spectrogram(X["p"])
 
 # Plot
 plt.style.use("../figures.mplstyle")
-fig, axes = plt.subplots(nrows=N, figsize=(7.1, 3), gridspec_kw=dict(
-    hspace=0.11, wspace=0.0, left=0.06, right=0.97, bottom=0.07, top=0.98))
+fig, axes = plt.subplots(
+    nrows=N,
+    figsize=(7.1, 3),
+    gridspec_kw=dict(
+        hspace=0.11, wspace=0.0, left=0.06, right=0.97, bottom=0.07, top=0.98
+    ),
+)
 
 for i in range(N):
     ax = axes[i]
-    img = ax.pcolormesh(p["time"], p["frequency"], p,
-                        vmin=-100, vmax=0, cmap="viridis", rasterized=True)
-    ax.annotate(date_range[i].item().strftime("%d/%m"),
-                (3, 3), xycoords='axes points', color="white")
+    img = ax.pcolormesh(
+        p["time"], p["frequency"], p, vmin=-100, vmax=0, cmap="viridis", rasterized=True
+    )
+    ax.annotate(
+        date_range[i].item().strftime("%d/%m"),
+        (3, 3),
+        xycoords="axes points",
+        color="white",
+    )
     ax.set_xlim(date_range[i], date_range[i + 1])
     ax.tick_params(labelbottom=False)
     ax.xaxis.set_major_locator(mdates.HourLocator(interval=6))
@@ -36,9 +46,8 @@ for i in range(N):
 
 ax.tick_params(labelbottom=True)
 ax.set_xticklabels(
-    ["00:00", "06:00", "12:00", "18:00",
-     "00:00", "06:00", "12:00", "18:00",
-     "00:00"])
+    ["00:00", "06:00", "12:00", "18:00", "00:00", "06:00", "12:00", "18:00", "00:00"]
+)
 axes[N // 2].set_ylabel("Frequency [Hz]")
 
 fig.savefig("../figs/spectrogram.pdf")

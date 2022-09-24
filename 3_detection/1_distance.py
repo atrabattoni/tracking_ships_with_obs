@@ -1,11 +1,10 @@
-
 import numpy as np
 import obsea
 import pandas as pd
 import xarray as xr
 from obspy import read, read_inventory
 
-reference = 300 + 1j*550.0
+reference = 300 + 1j * 550.0
 nperseg = 1024
 step = 512
 nsigma = 2
@@ -16,12 +15,9 @@ grid = {
     "dv": 0.5,
     "vmax": 13.0,
 }
-mu = xr.open_dataarray(
-    "../inputs/mu_model.nc")
-sigma = xr.open_dataarray(
-    "../inputs/sigma_model.nc")
-tdoa = xr.open_dataarray(
-    "../inputs/tdoa_november.nc").T
+mu = xr.open_dataarray("../inputs/mu_model.nc")
+sigma = xr.open_dataarray("../inputs/sigma_model.nc")
+tdoa = xr.open_dataarray("../inputs/tdoa_november.nc").T
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
 # Load waveforms
@@ -39,12 +35,19 @@ t = (t - pd.Timestamp(0)) / pd.Timedelta(1, "s")
 
 
 _ceps = ceps.copy()
-_ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / \
-    np.timedelta64(1, "s")
-_ceps = obsea.batch_svd_filter(_ceps, 3*3600, remove_mean=False)
+_ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
+_ceps = obsea.batch_svd_filter(_ceps, 3 * 3600, remove_mean=False)
 _ell = obsea.cepstral_detection(
-    _ceps, model, grid["dr"], grid["rmax"], grid["dv"], grid["vmax"],
-    nsigma, grid["dt"], t=t)
+    _ceps,
+    model,
+    grid["dr"],
+    grid["rmax"],
+    grid["dv"],
+    grid["vmax"],
+    nsigma,
+    grid["dt"],
+    t=t,
+)
 ell = _ell.copy()
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 

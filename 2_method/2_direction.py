@@ -22,7 +22,7 @@ R = 0.99
 fmin, fmax = 11.0, 24.0
 water_level = 40.0
 obs_orientation = 77.0
-obs_location = 350.0 + 1j*50.0
+obs_location = 350.0 + 1j * 50.0
 cpa = 15_000.0
 radius = 70_000.0
 n_ship = 1
@@ -41,11 +41,12 @@ st.attach_response(inventory)
 with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
 track -= obs_location
-track *= np.exp(1j*np.deg2rad(obs_orientation))
+track *= np.exp(1j * np.deg2rad(obs_orientation))
 
 # Prepocessing
 tf = obsea.time_frequency(
-    st, nperseg=nperseg, step=nperseg//2, water_level=water_level)
+    st, nperseg=nperseg, step=nperseg // 2, water_level=water_level
+)
 s = obsea.spectrogram(tf["p"])
 az = obsea.intensity(tf)
 u = az.sel(frequency=slice(fmin, fmax))
@@ -55,7 +56,8 @@ u = az.sel(frequency=slice(fmin, fmax))
 _u = u.copy()
 _u["time"] = (_u["time"] - np.datetime64(1, "s")) / np.timedelta64(1, "s")
 _ell = obsea.tonal_detection(
-    _u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t_step=t_step)
+    _u, n_azimuth, 0.0, R, dt, endpoint=endpoint, t_step=t_step
+)
 ell = _ell.copy()
 ell["time"] = (1e9 * ell["time"]).astype("datetime64[ns]")
 
@@ -69,16 +71,22 @@ peaks *= ell["azimuth"][1]
 # %% Plot
 plt.style.use("../figures.mplstyle")
 
-fig, axes = plt.subplots(2, sharex=True, gridspec_kw=dict(
-    hspace=0.08, wspace=0.0,
-    left=0.14, right=0.97,
-    bottom=0.08, top=0.98,
-))
+fig, axes = plt.subplots(
+    2,
+    sharex=True,
+    gridspec_kw=dict(
+        hspace=0.08,
+        wspace=0.0,
+        left=0.14,
+        right=0.97,
+        bottom=0.08,
+        top=0.98,
+    ),
+)
 # Azigram
 ax = axes[0]
 img = obsea.plot_azigram(az, ax=ax, rasterized=True, add_colorbar=False)
-fig.colorbar(img, ax=ax, pad=0.01, ticks=np.arange(0, 361, 60),
-             label="Azimuth [°]")
+fig.colorbar(img, ax=ax, pad=0.01, ticks=np.arange(0, 361, 60), label="Azimuth [°]")
 ax.axhline(11, color="black", ls="--")
 ax.axhline(24, color="black", ls="--")
 ax.set_xlabel(None)
@@ -87,13 +95,33 @@ ax.set_ylabel("Frequency [Hz]")
 
 # Log-Likelihood
 ax = axes[1]
-img = ax.pcolormesh(ell["time"].values, ell["azimuth"].values, np.log(ell.T.values),
-                    vmin=-40, vmax=40, cmap=cc.coolwarm, rasterized=True)
+img = ax.pcolormesh(
+    ell["time"].values,
+    ell["azimuth"].values,
+    np.log(ell.T.values),
+    vmin=-40,
+    vmax=40,
+    cmap=cc.coolwarm,
+    rasterized=True,
+)
 fig.colorbar(img, ax=ax, pad=0.01, label="Log-likelihood")
-ax.plot(peaks["time"], peaks,
-        ls="", marker="s", ms=2, mfc="none", mec="C2", label="detection")
-ax.plot(track["time"], np.rad2deg(
-    np.arctan2(track.real, track.imag)) % 360, "black", ls="-.", label="AIS")
+ax.plot(
+    peaks["time"],
+    peaks,
+    ls="",
+    marker="s",
+    ms=2,
+    mfc="none",
+    mec="C2",
+    label="detection",
+)
+ax.plot(
+    track["time"],
+    np.rad2deg(np.arctan2(track.real, track.imag)) % 360,
+    "black",
+    ls="-.",
+    label="AIS",
+)
 ax.set_ylim(0, 360)
 ax.yaxis.set_major_locator(MultipleLocator(60))
 ax.yaxis.set_minor_locator(MultipleLocator(10))
@@ -104,5 +132,5 @@ ax.set_xlim(
     np.datetime64("2012-11-27T06:30:00"),
     np.datetime64("2012-11-27T10:00:00"),
 )
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
 fig.savefig("../figs/method_direction.pdf")

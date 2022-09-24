@@ -17,7 +17,7 @@ import utils
 # %% Load Data
 
 obs_orientation = 77.0
-obs_location = 350.0 + 1j*50.0
+obs_location = 350.0 + 1j * 50.0
 cpa = 25_000.0
 radius = 100_000.0
 date_range = pd.date_range("2013-05-21", "2013-05-27", freq="D")
@@ -35,11 +35,11 @@ data["rp"] = xr.open_dataarray("../data/ell_rp.nc")
 Pd = dict(r=0.6, a=0.9)
 n = dict(r=60, a=120)
 
-ell = {k: utils.detection_probability(utils.marginal(v), Pd[k[0]])
-       for k, v in data.items()}
+ell = {
+    k: utils.detection_probability(utils.marginal(v), Pd[k[0]]) for k, v in data.items()
+}
 ell["all"] = ell["r"] * ell["a"]
-ell = {k: utils.segment(v, n[k[0]])
-       for k, v in ell.items()}
+ell = {k: utils.segment(v, n[k[0]]) for k, v in ell.items()}
 p = {k: utils.ell2proba(v) for k, v in ell.items()}
 dtc = {
     "vm": (p["all"] > 0.5) & (p["r"] > 0.5) & (p["rm"] > p["rp"]),

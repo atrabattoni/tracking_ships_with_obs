@@ -13,8 +13,8 @@ t_ais = obsea.read_marine_traffic("/Volumes/SSD/data/AIS/marine_traffic.csv")
 
 # Stations
 inventory = read_inventory("/Volumes/SSD/data/StationXML/RR.xml")
-network, = inventory
-rr03, = network.select(station="RR03")
+(network,) = inventory
+(rr03,) = network.select(station="RR03")
 
 # Geographic projection
 projection = ccrs.PlateCarree()
@@ -24,49 +24,53 @@ plt.style.use("../figures.mplstyle")
 fig, ax = plt.subplots(
     subplot_kw=dict(projection=projection),
     gridspec_kw=dict(
-        left=0.05, right=1.0,
-        bottom=0.06, top=0.99,
-    )
+        left=0.05,
+        right=1.0,
+        bottom=0.06,
+        top=0.99,
+    ),
 )
 
 # AIS logs
 coeff = 2e-3
+ax.scatter(s_ais["lon"], s_ais["lat"], s=coeff, ec="none", fc="C2", rasterized=True)
 ax.scatter(
-    s_ais["lon"], s_ais["lat"],
-    s=coeff, ec="none", fc="C2",
-    rasterized=True)
-ax.scatter(
-    t_ais["lon"], t_ais["lat"],
-    s=12*coeff, ec="none", fc="C0",
-    rasterized=True)
+    t_ais["lon"], t_ais["lat"], s=12 * coeff, ec="none", fc="C0", rasterized=True
+)
 ax.scatter([], [], ec="none", fc="C2", label="S-AIS")
 ax.scatter([], [], ec="none", fc="C0", label="T-AIS")
 
 # Coastline
 coastline = cfeature.NaturalEarthFeature(
-    category="physical", name="coastline", scale="10m",
-    ec="black", fc=cfeature.COLORS["land"], lw=0.5)
+    category="physical",
+    name="coastline",
+    scale="10m",
+    ec="black",
+    fc=cfeature.COLORS["land"],
+    lw=0.5,
+)
 ax.add_feature(coastline)
 
 # Stations
 for station in network:
-    ax.plot(
-        station.longitude, station.latitude, "*",
-        mfc="white", mec="black", ms=6)
-ax.plot(
-    rr03.longitude, rr03.latitude, "*",
-    mfc="white", mec="C3", ms=6, mew=1.0)
+    ax.plot(station.longitude, station.latitude, "*", mfc="white", mec="black", ms=6)
+ax.plot(rr03.longitude, rr03.latitude, "*", mfc="white", mec="C3", ms=6, mew=1.0)
 ax.annotate(
-    rr03.code, (rr03.longitude, rr03.latitude),
-    xytext=(0, -9), textcoords="offset points",
-    ha="center", c="white", weight="bold",
+    rr03.code,
+    (rr03.longitude, rr03.latitude),
+    xytext=(0, -9),
+    textcoords="offset points",
+    ha="center",
+    c="white",
+    weight="bold",
     path_effects=[
-        path_effects.Stroke(linewidth=2, foreground='C3'),
-        path_effects.Normal()])
+        path_effects.Stroke(linewidth=2, foreground="C3"),
+        path_effects.Normal(),
+    ],
+)
 
 
 # Formatting Ticks
-
 @FuncFormatter
 def eastfmt(x, pos):
     return "{:g}°E".format(x)

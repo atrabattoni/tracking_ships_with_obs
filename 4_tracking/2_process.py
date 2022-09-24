@@ -35,7 +35,7 @@ def process(segment, ntrack, data):
     brute_force = utils.make_brute_force(loglik)
 
     # Coarse
-    tg = t_cpa + np.arange(-30*60, 30*60 + 3*60, 3*60)
+    tg = t_cpa + np.arange(-30 * 60, 30 * 60 + 3 * 60, 3 * 60)
     rg = np.arange(-50_000, 50_000 + 1000, 1000)
     ag = np.arange(0, 2 * np.pi, np.deg2rad(10))
     vg = np.arange(6, 13 + 0.5, 0.5)
@@ -46,11 +46,11 @@ def process(segment, ntrack, data):
     v_inf = vg[index[3]]
 
     # Medium
-    tg = t_cpa + np.arange(-3*60, 3*60 + 10, 10)
+    tg = t_cpa + np.arange(-3 * 60, 3 * 60 + 10, 10)
     rg = r_cpa + np.arange(-1000, 1000 + 100, 100)
-    ag = (a_inf + np.arange(-np.deg2rad(10),
-                            np.deg2rad(10 + 1),
-                            np.deg2rad(1))) % (2*np.pi)
+    ag = (a_inf + np.arange(-np.deg2rad(10), np.deg2rad(10 + 1), np.deg2rad(1))) % (
+        2 * np.pi
+    )
     vg = v_inf + np.arange(-0.5, 0.5 + 0.1, 0.1)
     index, _ = brute_force(tg, rg, ag, vg)
     t_cpa = tg[index[0]]
@@ -61,9 +61,9 @@ def process(segment, ntrack, data):
     # Fine
     tg = t_cpa + np.arange(-10, 10 + 1, 1)
     rg = r_cpa + np.arange(-100, 100 + 10, 10)
-    ag = (a_inf + np.arange(-np.deg2rad(1),
-                            np.deg2rad(1 + 0.1),
-                            np.deg2rad(0.1))) % (2*np.pi)
+    ag = (a_inf + np.arange(-np.deg2rad(1), np.deg2rad(1 + 0.1), np.deg2rad(0.1))) % (
+        2 * np.pi
+    )
     vg = v_inf + np.arange(-0.1, 0.1 + 0.01, 0.01)
     index, _ = brute_force(tg, rg, ag, vg)
     t_cpa = tg[index[0]]
@@ -81,10 +81,12 @@ def process(segment, ntrack, data):
 
 
 # Load likelihood
-data = xr.Dataset({
-    "a": xr.open_dataarray("../data/ell_a.nc"),
-    "r": xr.open_dataarray("../data/ell_rv.nc"),
-})
+data = xr.Dataset(
+    {
+        "a": xr.open_dataarray("../data/ell_a.nc"),
+        "r": xr.open_dataarray("../data/ell_rv.nc"),
+    }
+)
 
 # Load segments
 with open("../data/segments.pkl", "rb") as file:

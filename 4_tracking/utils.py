@@ -28,8 +28,7 @@ def segment(ell, n):
 
 def chunk(xarr, date_range):
     N = len(date_range) - 1
-    return[xarr.sel(time=slice(date_range[i], date_range[i + 1]))
-           for i in range(N)]
+    return [xarr.sel(time=slice(date_range[i], date_range[i + 1])) for i in range(N)]
 
 
 def limit(mask, tag):
@@ -62,25 +61,22 @@ def delimit(dtc):
         if lim[1] == "vm":
             if status == "vp":
                 segment = segments.pop()
-                delta = (prevlim[2] - lim[0]) / 2 \
-                    - np.timedelta64(45, "s")
-                segments.append(
-                    (segment[0], segment[1], prevlim[2] + delta))
-                segments.append(
-                    (lim[0] - delta, None, segment[2])
-                )
+                delta = (prevlim[2] - lim[0]) / 2 - np.timedelta64(45, "s")
+                segments.append((segment[0], segment[1], prevlim[2] + delta))
+                segments.append((lim[0] - delta, None, segment[2]))
         if lim[1] == "vp":
             if status == "vm":
                 segment = segments.pop()
                 delta = (prevlim[2] - lim[0]) / 2
                 cpa = lim[0] + delta
-                segments.append(
-                    (segment[0], cpa, segment[2])
-                )
+                segments.append((segment[0], cpa, segment[2]))
         status = lim[1]
         prevlim = lim
-        segments = [segment for segment in segments
-                    if segment[2] - segment[0] >= np.timedelta64(3600, "s")]
+        segments = [
+            segment
+            for segment in segments
+            if segment[2] - segment[0] >= np.timedelta64(3600, "s")
+        ]
     return segments
 
 
@@ -96,7 +92,7 @@ def select_segment(data, segment, convert=None):
         start = to_posix(segment[0])
         end = to_posix(segment[2])
     else:
-        raise(ValueError("convert must be None or 'posix'"))
+        raise (ValueError("convert must be None or 'posix'"))
     return data.sel(time=slice(start, end))
 
 
@@ -131,7 +127,7 @@ def smooth(ell, sigma_r, sigma_a, sigma_v):
 
 @njit
 def generate_line(t_cpa, r_cpa, a_inf, v_inf, t):
-    x0 = - r_cpa * np.cos(a_inf)
+    x0 = -r_cpa * np.cos(a_inf)
     y0 = r_cpa * np.sin(a_inf)
     vx = v_inf * np.sin(a_inf)
     vy = v_inf * np.cos(a_inf)
@@ -196,8 +192,7 @@ def linear2d(x, x0, dx, y, y0, dy, z):
         c0 = z[i_x, i_y]
         cx = z[i_x + 1, i_y] - z[i_x, i_y]
         cy = z[i_x, i_y + 1] - z[i_x, i_y]
-        cxy = z[i_x + 1, i_y + 1] + z[i_x, i_y] - \
-            z[i_x + 1, i_y] - z[i_x, i_y + 1]
+        cxy = z[i_x + 1, i_y + 1] + z[i_x, i_y] - z[i_x + 1, i_y] - z[i_x, i_y + 1]
         return cxy * mu_x * mu_y + cx * mu_x + cy * mu_y + c0
     else:
         return 0.0
