@@ -72,7 +72,8 @@ peaks *= ell["azimuth"][1]
 plt.style.use("../figures.mplstyle")
 
 fig, axes = plt.subplots(
-    2,
+    3,
+    figsize=(3.4, 3.8),
     sharex=True,
     gridspec_kw=dict(
         hspace=0.08,
@@ -83,8 +84,16 @@ fig, axes = plt.subplots(
         top=0.98,
     ),
 )
-# Azigram
+# Spectrogram
 ax = axes[0]
+img = s.plot(ax=ax, rasterized=True, add_colorbar=False, vmin=-80, vmax=-40)
+fig.colorbar(img, ax=ax, pad=0.01, label="PSD [dB]")
+ax.set_xlabel(None)
+ax.set_yticks([0, 5, 10, 15, 20, 25])
+ax.set_ylabel("Frequency [Hz]")
+
+# Azigram
+ax = axes[1]
 img = obsea.plot_azigram(az, ax=ax, rasterized=True, add_colorbar=False)
 fig.colorbar(img, ax=ax, pad=0.01, ticks=np.arange(0, 361, 60), label="Azimuth [°]")
 ax.axhline(11, color="black", ls="--")
@@ -94,7 +103,7 @@ ax.set_yticks([0, 5, 10, 15, 20, 25])
 ax.set_ylabel("Frequency [Hz]")
 
 # Log-Likelihood
-ax = axes[1]
+ax = axes[2]
 img = ax.pcolormesh(
     ell["time"].values,
     ell["azimuth"].values,
