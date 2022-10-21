@@ -73,14 +73,14 @@ plt.style.use("../figures.mplstyle")
 
 fig, axes = plt.subplots(
     3,
-    figsize=(3.4, 3.8),
+    figsize=(3.4, 3.4),
     sharex=True,
     gridspec_kw=dict(
-        hspace=0.08,
+        hspace=0.1,
         wspace=0.0,
         left=0.14,
         right=0.97,
-        bottom=0.08,
+        bottom=0.06,
         top=0.98,
     ),
 )
