@@ -1,14 +1,15 @@
 # %% Libraries
+import pickle
+
 import colorcet
+import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mtickers
-import matplotlib.colors as mcolors
 import numpy as np
 import obsea
 import pandas as pd
 import xarray as xr
-import pickle
+from matplotlib.offsetbox import AnchoredText
 from obspy import read, read_inventory
 
 # %% Parameters
@@ -109,6 +110,15 @@ cbar.ax.text(
     transform=ax.transAxes,
 )
 ax.set_ylabel("Quefrency [s]")
+at = AnchoredText(
+    "a)",
+    prop=dict(size=10, weight="bold", color="white"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 
 # Log-Likelihood
 ax = axes[1]
@@ -134,6 +144,15 @@ cbar.ax.text(
 ax.set_ylim(0, 50)
 ax.set_yticks([0, 25, 50])
 ax.set_ylabel("Distance [km]")
+at = AnchoredText(
+    "b)",
+    prop=dict(size=10, weight="bold"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 
 # Peaks
 ax = axes[2]
@@ -172,5 +191,15 @@ ax.set_xlim(
     np.datetime64("2012-11-27T10:00:00"),
 )
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+ax.set_xlabel("Time")
+at = AnchoredText(
+    "c)",
+    prop=dict(size=10, weight="bold"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 
 fig.savefig("../figs/method_distance.pdf")
