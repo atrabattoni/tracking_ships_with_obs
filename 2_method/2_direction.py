@@ -1,6 +1,4 @@
 # %% Import Libraries
-import pickle
-
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +11,6 @@ from matplotlib.ticker import MultipleLocator
 from obspy import read, read_inventory
 
 # %% Parameters
-
 nperseg = 1024
 dt = 180.0
 t_step = 60
@@ -37,8 +34,7 @@ inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 
 # AIS
-with open("../data/track.pkl", "rb") as file:
-    track = pickle.load(file)
+track = obsea.read_complex("../data/track.nc")
 track -= obs_location
 track *= np.exp(1j * np.deg2rad(obs_orientation))
 

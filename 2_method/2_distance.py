@@ -72,8 +72,7 @@ ceps = np.abs(obsea.analytic_signal(ceps))
 loglik = np.log(ell.mean("speed"))
 
 # %% Load AIS
-with open("../data/track.pkl", "rb") as file:
-    track = pickle.load(file)
+track = obsea.read_complex("../data/track.nc")
 track -= reference
 track = track.interp_like(ceps)
 rtrack = np.abs(track)
