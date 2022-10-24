@@ -3,6 +3,7 @@ import colorcet
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtickers
+import matplotlib.colors as mcolors
 import numpy as np
 import obsea
 import pandas as pd
@@ -136,16 +137,21 @@ ax.set_ylabel("Distance [km]")
 
 # Peaks
 ax = axes[2]
+c = v.values * 1.943844
+c = mcolors.Normalize(vmin=-25, vmax=25)(c)
+c = colorcet.cm.CET_D3(c)
 sc = ax.scatter(
     r["time"],
     r.values / 1000,
     marker="s",
     s=4,
-    c=v.values * 1.943844,
+    c=np.clip(v.values * 1.943844, -25, 25),
     linewidths=0.5,
     label="detection",
     cmap="cet_diverging_gwr_55_95_c38",
 )
+sc.set_edgecolors(c)
+sc.set_facecolors("none")
 cbar = fig.colorbar(sc, ax=ax, pad=0.02, ticks=[-25, 0, 25])
 cbar.ax.text(
     1.18,
