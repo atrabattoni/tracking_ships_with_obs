@@ -7,7 +7,13 @@ from scipy.ndimage import convolve
 
 
 def marginal(ell):
-    return ell.mean(ell.dims[1:])
+    if "distance" in ell.dims:
+        distance = ell["distance"]
+        marginal = (ell * distance).sum("distance") / distance.sum("distance")
+    else:
+        marginal = ell
+    dims = [dim for dim in ell.dims if not dim == "time"]
+    return ell.mean(dims)
 
 
 def detection_probability(ell, pd):

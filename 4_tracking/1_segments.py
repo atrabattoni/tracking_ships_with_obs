@@ -2,17 +2,11 @@
 
 import pickle
 
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import numpy as np
-import obsea
 import pandas as pd
 import xarray as xr
-from obspy.clients.fdsn import Client
-from pandas import to_datetime
 
 import utils
-
 
 # %% Load Data
 

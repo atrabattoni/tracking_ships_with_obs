@@ -51,7 +51,8 @@ _ell = obsea.cepstral_detection(
 ell = _ell.copy()
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 
-marginal = ell.mean(["distance", "speed"])
+marginal = (ell * ell["distance"]).sum("distance") / ell["distance"].sum("distance")
+marginal = marginal.mean(["speed"])
 mask = marginal > 1.0
 
 arg = ell.argmax(["distance", "speed"])
