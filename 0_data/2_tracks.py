@@ -1,16 +1,16 @@
+# %% Libs
 import pandas as pd
-import pickle
 
 import obsea
 import numpy as np
 from obspy import read_inventory
 
-# Load station
+# %% Load station
 station = read_inventory("../data/RR03.xml")[0][0]
 timedelta = np.timedelta64(24, "h")
 radius = 100_000.0
 
-# Method
+# %% Method
 dataset = "ais_marine_traffic"
 cpa = 15_000.0
 n_ship = 1
@@ -21,10 +21,9 @@ tracks = obsea.read_ais(ais, timedelta)
 tracks = obsea.select_tracks(tracks, station, radius, cpa)
 
 track = tracks.iloc[n_ship]
-with open("../data/track.pkl", "wb") as file:
-    pickle.dump(track, file)
+obsea.save_complex(track, "../data/track.nc")
 
-# Week
+# %% Week
 dataset = "ais_week_cls"
 cpa = 25_000.0
 timedelta = np.timedelta64(24, "h")
@@ -44,4 +43,5 @@ cpa_time = cpa_time[mask]
 cpa_time = cpa_time.sort_values()
 tracks = tracks[cpa_time.index]
 
-tracks.to_pickle("../data/tracks.pkl")
+for idx, track in enumerate(tracks, start=1):
+    obsea.save_complex(track, f"../data/track_{idx}.nc")
