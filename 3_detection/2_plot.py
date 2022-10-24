@@ -1,12 +1,14 @@
 import pickle
 
+import colorcet
+import matplotlib.colors as mcolors
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
-from obspy import read, read_inventory
 import obsea
 import pandas as pd
 import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+from obspy import read, read_inventory
 
 # Dates
 date_range = pd.date_range("2013-05-21", "2013-05-27", freq="2D")
@@ -44,14 +46,14 @@ fig, axes = plt.subplots(
         wspace=0.0,
         left=0.06,
         right=0.98,
-        bottom=0.04,
+        bottom=0.05,
         top=0.99,
         height_ratios=[1, bar, 1, blank, 1, bar, 1, blank, 1, bar, 1],
     ),
 )
 for i in range(N):
     ax = axes[4 * i]
-    ax.scatter(t, a, marker="s", s=4, fc="none", ec="C4", linewidth=0.5)
+    ax.scatter(t, a, marker="s", s=4, fc="none", ec="C0", linewidth=0.5)
     for atrack in atracks:
         ax.plot(t, atrack, c="black", ls="-.")
     for segment in segments:
@@ -62,14 +64,23 @@ for i in range(N):
     ax.tick_params(bottom=False, labelbottom=False)
     ax.set_ylim(0, 360)
     ax.set_yticks([0, 90, 180, 270, 360])
-    ax.set_ylabel("Azimuth [°]")
+    ax.text(
+        -0.05,
+        0.5,
+        "Azimuth [°]",
+        rotation=90,
+        verticalalignment="center",
+        horizontalalignment="right",
+        transform=ax.transAxes,
+    )
+    # ax.set_ylabel("Azimuth [°]")
 
     ax = axes[4 * i + 1]
     ax.fill_between(
         dtc["xor"]["time"],
         0,
         1 * dtc["xor"],
-        facecolor="gray",
+        facecolor="C0",
         lw=0,
         edgecolor="none",
         step="mid",
@@ -100,15 +111,20 @@ for i in range(N):
         ax.axvline(segment[2], c="C3", ls=":")
 
     ax = axes[4 * i + 2]
-    ax.scatter(
+    c = v.values * 1.943844
+    c = mcolors.Normalize(vmin=-25, vmax=25)(c)
+    c = colorcet.cm.CET_D3(c)
+    sc = ax.scatter(
         t,
         r / 1000,
         marker="s",
         s=4,
-        c=v * 1.943844,
+        c=np.clip(v.values * 1.943844, -25, 25),
         linewidth=0.5,
         cmap="cet_diverging_gwr_55_95_c38",
     )
+    sc.set_edgecolors(c)
+    sc.set_facecolors("none")
     for rtrack in rtracks:
         ax.plot(t, rtrack / 1000, c="black", ls="-.")
     for segment in segments:
@@ -123,7 +139,15 @@ for i in range(N):
     ax.tick_params(labelbottom=False)
     ax.set_ylim(0, 50)
     ax.set_yticks(np.arange(0, 60, 10))
-    ax.set_ylabel("Distance [km]")
+    ax.text(
+        -0.05,
+        0.5,
+        "Distance [km]",
+        rotation=90,
+        verticalalignment="center",
+        horizontalalignment="right",
+        transform=ax.transAxes,
+    )
 
 axes[3].axis("off")
 axes[7].axis("off")
