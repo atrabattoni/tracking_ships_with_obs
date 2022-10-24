@@ -103,20 +103,15 @@ for i in range(N):
         ax.axvline(segment[2], c="C3", ls=":")
 
     ax = axes[4 * i + 2]
-    c = v.values * 1.943844
-    c = mcolors.Normalize(vmin=-25, vmax=25)(c)
-    c = colorcet.cm.CET_D3(c)
-    sc = ax.scatter(
+    ax.scatter(
         t,
         r / 1000,
-        marker="s",
+        marker="$\u25A1$",
         s=4,
         c=np.clip(v.values * 1.943844, -25, 25),
         linewidth=0.5,
         cmap="cet_diverging_gwr_55_95_c38",
     )
-    sc.set_edgecolors(c)
-    sc.set_facecolors("none")
     for rtrack in rtracks:
         ax.plot(t, rtrack / 1000, c="black", ls="-.")
     for segment in segments:
