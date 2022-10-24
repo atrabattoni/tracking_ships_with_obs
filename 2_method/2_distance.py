@@ -113,7 +113,7 @@ cbar.ax.text(
 ax.set_ylabel("Quefrency [s]")
 at = AnchoredText(
     "a)",
-    prop=dict(size=10, weight="bold", color="white"),
+    prop=dict(size=10, weight="bold"),
     loc="upper left",
     frameon=False,
     borderpad=0,

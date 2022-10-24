@@ -1,17 +1,16 @@
 # %% Import Libraries
 import pickle
 
-from colorcet import cm as cc
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
+import obsea
 import pandas as pd
 import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+from colorcet import cm as cc
+from matplotlib.offsetbox import AnchoredText
 from matplotlib.ticker import MultipleLocator
 from obspy import read, read_inventory
-
-import obsea
-
 
 # %% Parameters
 
@@ -91,6 +90,15 @@ fig.colorbar(img, ax=ax, pad=0.01, label="PSD [dB]")
 ax.set_xlabel(None)
 ax.set_yticks([0, 5, 10, 15, 20, 25])
 ax.set_ylabel("Frequency [Hz]")
+at = AnchoredText(
+    "a)",
+    prop=dict(size=10, weight="bold"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 
 # Azigram
 ax = axes[1]
@@ -101,6 +109,15 @@ ax.axhline(24, color="black", ls="--")
 ax.set_xlabel(None)
 ax.set_yticks([0, 5, 10, 15, 20, 25])
 ax.set_ylabel("Frequency [Hz]")
+at = AnchoredText(
+    "b)",
+    prop=dict(size=10, weight="bold"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 
 # Log-Likelihood
 ax = axes[2]
@@ -131,11 +148,20 @@ ax.plot(
     ls="-.",
     label="AIS",
 )
+at = AnchoredText(
+    "c)",
+    prop=dict(size=10, weight="bold"),
+    loc="upper left",
+    frameon=False,
+    borderpad=0,
+    pad=0.2,
+)
+ax.add_artist(at)
 ax.set_ylim(0, 360)
 ax.yaxis.set_major_locator(MultipleLocator(60))
 ax.yaxis.set_minor_locator(MultipleLocator(10))
 ax.set_ylabel("Azimuth [°]")
-# ax.legend(loc="lower right")
+ax.set_xlabel("Time")
 
 ax.set_xlim(
     np.datetime64("2012-11-27T06:30:00"),
