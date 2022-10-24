@@ -97,7 +97,16 @@ ax = axes[0]
 img = ax.pcolormesh(
     ceps["time"], ceps["quefrency"], ceps, vmin=0, vmax=0.1, rasterized=True
 )
-fig.colorbar(img, ax=ax, ticks=[0.0, 0.1], label="Value", pad=0.02)
+cbar = fig.colorbar(img, ax=ax, ticks=[0.0, 0.1], pad=0.02)
+cbar.ax.text(
+    1.18,
+    0.5,
+    "Value",
+    rotation=90,
+    verticalalignment="center",
+    horizontalalignment="right",
+    transform=ax.transAxes,
+)
 ax.set_ylabel("Quefrency [s]")
 
 # Log-Likelihood
@@ -111,7 +120,16 @@ img = ax.pcolormesh(
     cmap="cet_diverging_bwr_40_95_c42",
     rasterized=True,
 )
-fig.colorbar(img, ax=ax, label="Log-likelihood", pad=0.02, ticks=[-200, 0, 200])
+cbar = fig.colorbar(img, ax=ax, pad=0.02, ticks=[-200, 0, 200])
+cbar.ax.text(
+    1.18,
+    0.5,
+    "Log-likelihood",
+    rotation=90,
+    verticalalignment="center",
+    horizontalalignment="right",
+    transform=ax.transAxes,
+)
 ax.set_ylim(0, 50)
 ax.set_yticks([0, 25, 50])
 ax.set_ylabel("Distance [km]")
@@ -128,7 +146,16 @@ sc = ax.scatter(
     label="detection",
     cmap="cet_diverging_gwr_55_95_c38",
 )
-fig.colorbar(sc, ax=ax, label="Speed [knots]", pad=0.02, ticks=[-25, 0, 25])
+cbar = fig.colorbar(sc, ax=ax, pad=0.02, ticks=[-25, 0, 25])
+cbar.ax.text(
+    1.18,
+    0.5,
+    "Speed [knots]",
+    rotation=90,
+    verticalalignment="center",
+    horizontalalignment="right",
+    transform=ax.transAxes,
+)
 ax.plot(rtrack["time"], rtrack / 1000, "black", ls="-.", label="AIS")
 ax.set_ylim(0, 50)
 ax.set_yticks([0, 25, 50])
