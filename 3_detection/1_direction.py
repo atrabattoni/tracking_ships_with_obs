@@ -1,5 +1,4 @@
-import pickle
-
+# %% Libs
 from colorcet import cm as cc
 import numpy as np
 import pandas as pd
@@ -11,7 +10,7 @@ from obspy import read, read_inventory
 
 import obsea
 
-# Parameters
+# %% Parameters
 nperseg = 1024
 dt = 180.0
 t_step = 60
@@ -26,12 +25,12 @@ n_ship = 1
 n_azimuth = 361
 endpoint = True
 
-# Load data
+# $$ Load data
 st = read("../data/waveforms.mseed")
 inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 
-# Prepocessing
+# %% Prepocessing
 tf = obsea.time_frequency(
     st, nperseg=nperseg, step=nperseg // 2, water_level=water_level
 )
@@ -39,7 +38,7 @@ s = obsea.spectrogram(tf["p"])
 az = obsea.intensity(tf)
 u = az.sel(frequency=slice(fmin, fmax))
 
-# Tonal detection
+# %% Tonal detection
 t = pd.date_range("2013-05-21", "2013-05-27", freq="1 min")
 t = (t - pd.Timestamp(0)) / pd.Timedelta(1, "s")
 _u = u.copy()
@@ -53,6 +52,6 @@ peaks = ell.argmax("azimuth").astype(float)
 peaks[seuil <= 0] = np.nan
 peaks *= ell["azimuth"][1]
 
-# Save
+# %% Save
 peaks.to_netcdf("../data/a.nc")
 ell.to_netcdf("../data/ell_a.nc")
