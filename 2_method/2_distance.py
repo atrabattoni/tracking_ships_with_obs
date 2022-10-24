@@ -58,7 +58,8 @@ _ell = obsea.cepstral_detection(
 )
 ell = _ell.copy()
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
-marginal = ell.mean(["distance", "speed"])
+marginal = (ell * ell["distance"]).sum("distance") / ell["distance"].sum("distance")
+marginal = marginal.mean(["speed"])
 mask = marginal > 1.0
 
 arg = ell.argmax(["distance", "speed"])
@@ -101,7 +102,7 @@ img = ax.pcolormesh(
 )
 cbar = fig.colorbar(img, ax=ax, ticks=[0.0, 0.1], pad=0.02)
 cbar.ax.text(
-    1.18,
+    1.19,
     0.5,
     "Value",
     rotation=90,
@@ -133,7 +134,7 @@ img = ax.pcolormesh(
 )
 cbar = fig.colorbar(img, ax=ax, pad=0.02, ticks=[-200, 0, 200])
 cbar.ax.text(
-    1.18,
+    1.19,
     0.5,
     "Log-likelihood",
     rotation=90,
@@ -173,7 +174,7 @@ sc.set_edgecolors(c)
 sc.set_facecolors("none")
 cbar = fig.colorbar(sc, ax=ax, pad=0.02, ticks=[-25, 0, 25])
 cbar.ax.text(
-    1.18,
+    1.19,
     0.5,
     "Speed [knots]",
     rotation=90,
