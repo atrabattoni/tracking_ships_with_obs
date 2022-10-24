@@ -37,17 +37,6 @@ p = obsea.time_frequency(st, nperseg, step)["p"]
 ceps = obsea.cepstrogram(p)
 ceps = obsea.svd_filter(ceps, remove_mean=False)
 
-data = obsea.compute_logell(ceps.values, **model)
-logell = xr.DataArray(
-    data=data,
-    coords={
-        "interference": [1, 2, 3],
-        "distance": grid["dr"] * np.arange(data.shape[1]),  # TODO
-        "time": ceps["time"],
-    },
-    dims=("interference", "distance", "time"),
-)
-
 _ceps = ceps.copy()
 _ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
 _ell = obsea.cepstral_detection(
