@@ -1,3 +1,4 @@
+# %% Libraries
 import colorcet
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ import xarray as xr
 import pickle
 from obspy import read, read_inventory
 
+# %% Parameters
 reference = 300 + 1j * 550.0
 nperseg = 1024
 step = 512
@@ -20,19 +22,21 @@ grid = {
     "dv": 0.5,
     "vmax": 13.0,
 }
+
+# %% Load models
 mu = xr.open_dataarray("../inputs/mu_model.nc")
 sigma = xr.open_dataarray("../inputs/sigma_model.nc")
 tdoa = xr.open_dataarray("../inputs/tdoa_november.nc").T
 
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 
-# Load waveforms
+# %% Load waveforms
 st = read("../data/waveform.mseed")
 inventory = read_inventory("../data/RR03.xml")
 st.attach_response(inventory)
 st = st.select(channel="BDH")
 
-# Process waveforms
+# %% Process waveforms
 p = obsea.time_frequency(st, nperseg, step)["p"]
 ceps = obsea.cepstrogram(p)
 ceps = obsea.svd_filter(ceps, remove_mean=False)
@@ -64,15 +68,14 @@ v[~mask] = np.nan
 ceps = np.abs(obsea.analytic_signal(ceps))
 loglik = np.log(ell.mean("speed"))
 
-# Load AIS
+# %% Load AIS
 with open("../data/track.pkl", "rb") as file:
     track = pickle.load(file)
 track -= reference
 track = track.interp_like(ceps)
 rtrack = np.abs(track)
 
-# %% PLOT
-
+# %% Plot
 plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(
     3,
@@ -88,6 +91,7 @@ fig, axes = plt.subplots(
         top=0.98,
     ),
 )
+
 # Cepstra
 ax = axes[0]
 img = ax.pcolormesh(
@@ -95,6 +99,7 @@ img = ax.pcolormesh(
 )
 fig.colorbar(img, ax=ax, ticks=[0.0, 0.1], label="Value", pad=0.02)
 ax.set_ylabel("Quefrency [s]")
+
 # Log-Likelihood
 ax = axes[1]
 img = ax.pcolormesh(
