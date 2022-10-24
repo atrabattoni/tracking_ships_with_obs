@@ -1,3 +1,4 @@
+# %% Libs
 import pickle
 
 import colorcet
@@ -10,17 +11,17 @@ import pandas as pd
 import xarray as xr
 from obspy import read, read_inventory
 
-# Dates
+# %% Dates
 date_range = pd.date_range("2013-05-21", "2013-05-27", freq="2D")
 N = len(date_range) - 1
 
-# Load detections
+# %% Load detections
 a = xr.open_dataarray("../data/a.nc")
 r = xr.open_dataarray("../data/r.nc")
 v = xr.open_dataarray("../data/v.nc")
 t = pd.to_datetime(a["time"].values, unit="s")
 
-# Load tracks
+# %% Load tracks
 tracks = pd.read_pickle("../data/tracks.pkl")
 tracks = tracks.apply(lambda xarr: xarr.interp_like(a["time"]))
 atracks = tracks.apply(
@@ -28,13 +29,13 @@ atracks = tracks.apply(
 )
 rtracks = tracks.apply(lambda xarr: np.abs(xarr))
 
-# Load segments
+# %% Load segments
 with open("../data/dtc.pkl", "rb") as file:
     dtc = pickle.load(file)
 with open("../data/segments.pkl", "rb") as file:
     segments = pickle.load(file)
 
-# Plot
+# %% Plot
 plt.style.use("../figures.mplstyle")
 blank = 0.2
 bar = 0.07
@@ -64,16 +65,7 @@ for i in range(N):
     ax.tick_params(bottom=False, labelbottom=False)
     ax.set_ylim(0, 360)
     ax.set_yticks([0, 90, 180, 270, 360])
-    ax.text(
-        -0.05,
-        0.5,
-        "Azimuth [°]",
-        rotation=90,
-        verticalalignment="center",
-        horizontalalignment="right",
-        transform=ax.transAxes,
-    )
-    # ax.set_ylabel("Azimuth [°]")
+    ax.set_ylabel("Azimuth [°]")
 
     ax = axes[4 * i + 1]
     ax.fill_between(
@@ -139,15 +131,7 @@ for i in range(N):
     ax.tick_params(labelbottom=False)
     ax.set_ylim(0, 50)
     ax.set_yticks(np.arange(0, 60, 10))
-    ax.text(
-        -0.05,
-        0.5,
-        "Distance [km]",
-        rotation=90,
-        verticalalignment="center",
-        horizontalalignment="right",
-        transform=ax.transAxes,
-    )
+    ax.set_ylabel("Distance [km]")
 
 axes[3].axis("off")
 axes[7].axis("off")
@@ -157,4 +141,5 @@ ax.set_xticklabels(
     ["00:00", "06:00", "12:00", "18:00", "00:00", "06:00", "12:00", "18:00", "00:00"]
 )
 
+fig.align_labels()
 fig.savefig("../figs/detection.pdf")
