@@ -1,5 +1,3 @@
-import pickle
-
 from obspy import read_inventory, UTCDateTime
 from obspy.clients.fdsn import Client
 import obsea
@@ -8,8 +6,7 @@ client = Client("RESIF")
 inventory = read_inventory("../data/RR03.xml")
 
 # Method
-with open("../data/track.pkl", "rb") as file:
-    track = pickle.load(file)
+track = obsea.read_complex("../data/track.nc")
 station = inventory[0][0]
 st = obsea.load_stream(track, client, inventory, station, "*")
 st.write("../data/waveform.mseed")

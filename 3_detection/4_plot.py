@@ -1,5 +1,5 @@
 # %% Libs
-import pickle
+from glob import glob
 
 import colorcet
 import matplotlib.colors as mcolors
@@ -22,7 +22,8 @@ v = xr.open_dataarray("../data/v.nc")
 t = pd.to_datetime(a["time"].values, unit="s")
 
 # %% Load tracks
-tracks = pd.read_pickle("../data/tracks.pkl")
+fnames = sorted(glob("../data/track_*.nc"))
+tracks = pd.Series([obsea.read_complex(fname) for fname in fnames])
 tracks = tracks.apply(lambda xarr: xarr.interp_like(a["time"]))
 atracks = tracks.apply(
     lambda xarr: (np.rad2deg(np.arctan2(xarr.real, xarr.imag)) - 77) % 360
@@ -30,10 +31,10 @@ atracks = tracks.apply(
 rtracks = tracks.apply(lambda xarr: np.abs(xarr))
 
 # %% Load segments
-with open("../data/dtc.pkl", "rb") as file:
-    dtc = pickle.load(file)
-with open("../data/segments.pkl", "rb") as file:
-    segments = pickle.load(file)
+dtc = xr.open_dataset("../data/dtc.nc")
+segments = pd.read_csv(
+    "../data/segments.csv", parse_dates=["starttime", "cpatime", "endtime"]
+)
 
 # %% Plot
 plt.style.use("../figures.mplstyle")
@@ -57,10 +58,10 @@ for i in range(N):
     ax.scatter(t, a, marker="s", s=4, fc="none", ec="C0", linewidth=0.5)
     for atrack in atracks:
         ax.plot(t, atrack, c="black", ls="-.")
-    for segment in segments:
-        ax.axvline(segment[0], c="C2", ls=":")
-        ax.axvline(segment[1], c="black", ls=":")
-        ax.axvline(segment[2], c="C3", ls=":")
+    for idx, segment in segments.iterrows():
+        ax.axvline(segment["starttime"], c="C2", ls=":")
+        ax.axvline(segment["cpatime"], c="black", ls=":")
+        ax.axvline(segment["endtime"], c="C3", ls=":")
     ax.set_xlim(date_range[i], date_range[i + 1])
     ax.tick_params(bottom=False, labelbottom=False)
     ax.set_ylim(0, 360)
@@ -97,10 +98,10 @@ for i in range(N):
     )
     ax.tick_params(bottom=False, labelbottom=False, labelleft=False, left=False)
     ax.set_xlim(date_range[i], date_range[i + 1])
-    for segment in segments:
-        ax.axvline(segment[0], c="C2", ls=":")
-        ax.axvline(segment[1], c="black", ls=":")
-        ax.axvline(segment[2], c="C3", ls=":")
+    for idx, segment in segments.iterrows():
+        ax.axvline(segment["starttime"], c="C2", ls=":")
+        ax.axvline(segment["cpatime"], c="black", ls=":")
+        ax.axvline(segment["endtime"], c="C3", ls=":")
 
     ax = axes[4 * i + 2]
     ax.scatter(
@@ -114,10 +115,10 @@ for i in range(N):
     )
     for rtrack in rtracks:
         ax.plot(t, rtrack / 1000, c="black", ls="-.")
-    for segment in segments:
-        ax.axvline(segment[0], c="C2", ls=":")
-        ax.axvline(segment[1], c="black", ls=":")
-        ax.axvline(segment[2], c="C3", ls=":")
+    for idx, segment in segments.iterrows():
+        ax.axvline(segment["starttime"], c="C2", ls=":")
+        ax.axvline(segment["cpatime"], c="black", ls=":")
+        ax.axvline(segment["endtime"], c="C3", ls=":")
     ax.annotate(
         date_range[i].strftime("%d/%m"), (3, 3), xycoords="axes points", color="black"
     )

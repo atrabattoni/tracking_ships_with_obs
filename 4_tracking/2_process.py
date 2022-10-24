@@ -1,5 +1,3 @@
-import pickle
-
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -22,7 +20,7 @@ def process(segment, ntrack, data):
     Pd = xr.Dataset({"a": 0.9, "r": 0.6})
 
     # Segment slicing
-    t_cpa = utils.to_posix(segment[1])
+    t_cpa = utils.to_posix(segment["cpatime"])
 
     ell = utils.select_segment(data, segment)
     ell = utils.detection_probability(ell, Pd)
@@ -89,12 +87,13 @@ data = xr.Dataset(
 )
 
 # Load segments
-with open("../data/segments.pkl", "rb") as file:
-    segments = pickle.load(file)
+segments = pd.read_csv(
+    "../data/segments.csv", parse_dates=["starttime", "cpatime", "endtime"]
+)
 
 ntracks = [1, 2, 3, 4, 5, 6, 8, 10, 11]
 results = []
-for ntrack, segment in zip(ntracks, segments):
+for ntrack, (_, segment) in zip(ntracks, segments.iterrows()):
     results.append(delayed(process)(segment, ntrack, data))
 
 with ProgressBar():
@@ -102,4 +101,4 @@ with ProgressBar():
 
 result = pd.concat([pd.DataFrame(res) for res in results])
 result = result.set_index("ntrack")
-result.to_pickle("../data/lines.pkl")
+result.to_csv("../data/lines.csv", float_format="%.3f")

@@ -1,8 +1,5 @@
 # %% Libraries
-import pickle
-
 import colorcet
-import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np

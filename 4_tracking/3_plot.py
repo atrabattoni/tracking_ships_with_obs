@@ -1,4 +1,4 @@
-import pickle
+from glob import glob
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -12,11 +12,12 @@ from colorcet import cm as cc
 import utils
 
 # Load segments
-with open("../data/segments.pkl", "rb") as file:
-    segments = pickle.load(file)
+segments = pd.read_csv(
+    "../data/segments.csv", parse_dates=["starttime", "cpatime", "endtime"]
+)
 
 # Load lines
-lines = pd.read_pickle("../data/lines.pkl")
+lines = pd.read_csv("../data/lines.csv", index_col="ntrack")
 ntracks = lines.index.to_list()
 
 # Load loglik
@@ -24,7 +25,8 @@ loglik_a = np.log(0.1 + 0.9 * xr.open_dataarray("../data/ell_a.nc"))
 loglik_r = np.log(0.4 + 0.6 * xr.open_dataarray("../data/ell_r.nc"))
 
 # Load tracks
-tracks = pd.read_pickle("../data/tracks.pkl")
+fnames = sorted(glob("../data/track_*.nc"))
+tracks = pd.Series([obsea.read_complex(fname) for fname in fnames])
 tracks_interp = tracks.apply(lambda xarr: xarr.interp_like(loglik_a["time"]))
 atracks = tracks.apply(
     lambda xarr: (np.rad2deg(np.arctan2(xarr.real, xarr.imag)) - 77) % 360
@@ -37,7 +39,7 @@ rtracks_interp = tracks_interp.apply(lambda xarr: np.abs(xarr))
 
 
 def plot(fig, cell, nsegment, k, ntrack):
-    segment = segments[nsegment]
+    segment = segments.iloc[nsegment]
     line = lines.loc[ntrack]
     track = tracks.iloc[ntrack - 1]
     track_interp = tracks_interp.iloc[ntrack - 1]

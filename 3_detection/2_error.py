@@ -1,10 +1,9 @@
 # %% Import libs
+from glob import glob
 
 import numpy as np
 import pandas as pd
 import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import obsea
 
 amax = 45
@@ -19,8 +18,8 @@ r = xr.open_dataarray("../data/r.nc")
 v = xr.open_dataarray("../data/v.nc")
 
 # Load tracks
-tracks = pd.read_pickle("../data/tracks.pkl")
-# tracks = tracks["linestring"]
+fnames = sorted(glob("../data/track_*.nc"))
+tracks = pd.Series([obsea.read_complex(fname) for fname in fnames])
 tracks = tracks.apply(lambda xarr: xarr.interp_like(a))
 tracks = xr.Dataset(tracks.to_dict())
 name_dict = {key: str(k) for k, key in enumerate(tracks.keys())}
@@ -106,7 +105,7 @@ df["Nr"] = count_rv
 df["Distance"] = np.round(smad_r, 0)
 df["Speed"] = np.round(smad_v, 2)
 df.index += 1
-df.to_excel("../data/detection_errors.xlsx")
+df.to_csv("../data/detection_errors.csv", index=False)
 
 
 df = pd.DataFrame(
@@ -116,4 +115,4 @@ df = pd.DataFrame(
         "Speed": [smad_vg.values.item()],
     }
 )
-df.to_excel("../data/detection_general_errors.xlsx")
+df.to_csv("../data/detection_general_errors.csv", index=False)

@@ -92,11 +92,11 @@ def to_posix(timestamp):
 
 def select_segment(data, segment, convert=None):
     if convert is None:
-        start = segment[0]
-        end = segment[2]
+        start = segment["starttime"]
+        end = segment["endtime"]
     elif convert == "posix":
-        start = to_posix(segment[0])
-        end = to_posix(segment[2])
+        start = to_posix(segment["starttime"])
+        end = to_posix(segment["endtime"])
     else:
         raise (ValueError("convert must be None or 'posix'"))
     return data.sel(time=slice(start, end))

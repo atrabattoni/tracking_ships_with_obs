@@ -1,15 +1,11 @@
 # %% Imports
-
-import pickle
-
 import numpy as np
 import pandas as pd
 import xarray as xr
 
 import utils
 
-# %% Load Data
-
+# %% Parameters
 obs_orientation = 77.0
 obs_location = 350.0 + 1j * 50.0
 cpa = 25_000.0
@@ -17,15 +13,14 @@ radius = 100_000.0
 date_range = pd.date_range("2013-05-21", "2013-05-27", freq="D")
 N = len(date_range) - 1
 
+# %% Load Data
 data = {}
 data["a"] = xr.open_dataarray("../data/ell_a.nc")
 data["r"] = xr.open_dataarray("../data/ell_r.nc")
 data["rm"] = xr.open_dataarray("../data/ell_rm.nc")
 data["rp"] = xr.open_dataarray("../data/ell_rp.nc")
 
-
 # %% Process Data
-
 Pd = dict(r=0.6, a=0.9)
 n = dict(r=60, a=120)
 
@@ -43,12 +38,12 @@ dtc["xor"] = (p["all"] > 0.5) & (~dtc["vm"]) & (~dtc["vp"])
 dtc["all"] = dtc["vm"] + dtc["vp"] + dtc["xor"]
 dtc_chunk = {k: utils.chunk(v, date_range) for k, v in dtc.items()}
 
+dtc = xr.Dataset(dtc)
 
 # %% Segment
-
 segments = utils.delimit(dtc)
+segments = pd.DataFrame(segments, columns=["starttime", "cpatime", "endtime"])
 
-with open("../data/dtc.pkl", "wb") as file:
-    pickle.dump(dtc, file)
-with open("../data/segments.pkl", "wb") as file:
-    pickle.dump(segments, file)
+# %% Save
+dtc.to_netcdf("../data/dtc.nc")
+segments.to_csv("../data/segments.csv", index=False)
