@@ -1,9 +1,11 @@
+mkdir -p data
+mkdir -p figs
 cd 0_data
 python 1_station.py
 python 2_tracks.py
 python 3_streams.py
 cd ..
-cd 1_exp&obs
+cd "1_exp&obs"
 python 1_spectrogram.py
 python 2_ais.py
 cd ..
