@@ -1,15 +1,8 @@
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import numpy as np
-import obsea
 import pandas as pd
 import xarray as xr
 from dask import compute, delayed
 from dask.diagnostics import ProgressBar
-from obspy import read_inventory
-from obspy.clients.fdsn import Client
-from scipy.optimize import minimize
 
 import utils
 

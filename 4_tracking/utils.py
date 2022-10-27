@@ -1,7 +1,6 @@
 import numpy as np
 import xarray as xr
 from numba import njit
-from scipy.interpolate import interpn
 from scipy.signal import gaussian
 from scipy.ndimage import convolve
 
