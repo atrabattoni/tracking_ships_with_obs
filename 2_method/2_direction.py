@@ -3,8 +3,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import obsea
-import pandas as pd
-import xarray as xr
 from colorcet import cm as cc
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.ticker import MultipleLocator
@@ -75,7 +73,7 @@ fig, axes = plt.subplots(
         wspace=0.0,
         left=0.14,
         right=0.97,
-        bottom=0.06,
+        bottom=0.11,
         top=0.98,
     ),
 )
@@ -88,7 +86,7 @@ ax.set_yticks([0, 5, 10, 15, 20, 25])
 ax.set_ylabel("Frequency [Hz]")
 at = AnchoredText(
     "a)",
-    prop=dict(size=10, weight="bold"),
+    prop=dict(size=10, weight="bold", color="white"),
     loc="upper left",
     frameon=False,
     borderpad=0,

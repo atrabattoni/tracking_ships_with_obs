@@ -86,7 +86,7 @@ fig, axes = plt.subplots(
         wspace=0.0,
         left=0.12,
         right=1.0,
-        bottom=0.06,
+        bottom=0.11,
         top=0.98,
     ),
 )
@@ -109,7 +109,7 @@ cbar.ax.text(
 ax.set_ylabel("Quefrency [s]")
 at = AnchoredText(
     "a)",
-    prop=dict(size=10, weight="bold"),
+    prop=dict(size=10, weight="bold", color="white"),
     loc="upper left",
     frameon=False,
     borderpad=0,
