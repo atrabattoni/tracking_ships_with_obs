@@ -23,9 +23,11 @@ grid = {
 }
 
 # %% Load models
-mu = xr.open_dataarray("../data/mu_model.nc")
+mu = xr.open_dataarray("../data/mu_model.nc").transpose(
+    "interference", "distance", "quefrency"
+)
 sigma = xr.open_dataarray("../data/sigma_model.nc")
-tdoa = xr.open_dataarray("../data/tdoa_model.nc").T
+tdoa = xr.open_dataarray("../data/tdoa_model.nc").transpose("interference", "distance")
 
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 

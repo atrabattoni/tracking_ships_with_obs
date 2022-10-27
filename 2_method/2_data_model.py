@@ -64,7 +64,7 @@ sigma_model = xr.DataArray(sigma_model, coords={"quefrency": tau}, dims=["quefre
 
 tdoa.to_netcdf("../data/tdoa_model.nc")
 mu_model.to_netcdf("../data/mu_model.nc")
-sigma_model.to_netcdf("../data/mu_sigma.nc")
+sigma_model.to_netcdf("../data/sigma_model.nc")
 
 # Limit to 50 km
 tdoa.loc[{"distance": slice(50000, None)}] = np.nan

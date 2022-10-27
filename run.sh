@@ -11,9 +11,10 @@ python 2_ais.py
 cd ..
 cd 2_method
 python 1_adjust_model.py
-python 1_branch_association.py
-python 2_direction.py
-python 2_distance.py
+python 2_data_model.py
+python 3_branch_association.py
+python 3_direction.py
+python 3_distance.py
 cd ..
 cd 3_detection
 python 1_direction.py
