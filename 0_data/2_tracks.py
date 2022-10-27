@@ -1,8 +1,6 @@
 # %% Libs
-import pandas as pd
-
-import obsea
 import numpy as np
+import obsea
 from obspy import read_inventory
 
 # %% Load station
@@ -44,4 +42,4 @@ cpa_time = cpa_time.sort_values()
 tracks = tracks[cpa_time.index]
 
 for idx, track in enumerate(tracks, start=1):
-    obsea.save_complex(track, f"../data/track_{idx}.nc")
+    obsea.save_complex(track, f"../data/track_{idx:06d}.nc")

@@ -19,11 +19,11 @@ v = xr.open_dataarray("../data/v.nc")
 
 # Load tracks
 fnames = sorted(glob("../data/track_*.nc"))
-tracks = pd.Series([obsea.read_complex(fname) for fname in fnames])
-tracks = tracks.apply(lambda xarr: xarr.interp_like(a))
-tracks = xr.Dataset(tracks.to_dict())
-name_dict = {key: str(k) for k, key in enumerate(tracks.keys())}
-tracks = tracks.rename(name_dict)
+tracks = {
+    idx: obsea.read_complex(fname).interp_like(a)
+    for idx, fname in enumerate(fnames, start=1)
+}
+tracks = xr.Dataset(tracks)
 obs_orientation = 77.0
 tracks *= np.exp(1j * np.deg2rad(obs_orientation))
 
@@ -98,14 +98,17 @@ smad_v = [smad_v[key].values.item() for key in smad_v]
 count_a = [count_a[key].values.item() for key in count_a]
 count_rv = [count_rv[key].values.item() for key in count_rv]
 
+# %% Save results
+
 df = pd.DataFrame()
+df["Track"] = np.arange(len(tracks)) + 1
 df["Na"] = count_a
 df["Heading"] = np.round(smad_a, 1)
 df["Nr"] = count_rv
 df["Distance"] = np.round(smad_r, 0)
 df["Speed"] = np.round(smad_v, 2)
-df.index += 1
-df.to_csv("../data/detection_errors.csv", index=False)
+df = df.set_index("Track")
+df.to_csv("../data/detection_errors.csv")
 
 
 df = pd.DataFrame(
