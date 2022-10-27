@@ -23,9 +23,9 @@ grid = {
 }
 
 # %% Load models
-mu = xr.open_dataarray("../inputs/mu_model.nc")
-sigma = xr.open_dataarray("../inputs/sigma_model.nc")
-tdoa = xr.open_dataarray("../inputs/tdoa_november.nc").T
+mu = xr.open_dataarray("../data/mu_model.nc")
+sigma = xr.open_dataarray("../data/sigma_model.nc")
+tdoa = xr.open_dataarray("../data/tdoa_model.nc").T
 
 model = obsea.build_model(mu, sigma, tdoa, 0.05, 50)
 

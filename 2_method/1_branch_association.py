@@ -9,9 +9,8 @@ plt.style.use("../figures.mplstyle")
 
 # %% TDOA Models
 N = 3
-r = np.loadtxt("../inputs/r.csv")
-toa = np.loadtxt("../inputs/tau.csv", delimiter=",")[:, : N + 1]
-tdoa = np.diff(toa, axis=-1)
+tdoa = xr.open_dataarray("../data/tdoa_model.nc").sel(interference=slice(1, N))
+r = tdoa["distance"]
 
 f = [
     interp1d(r, tdoa[:, k], kind="linear", fill_value=np.nan, bounds_error=False)

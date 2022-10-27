@@ -9,16 +9,14 @@ sigma = 0.05
 
 # Load data
 mu = xr.open_dataarray("../data/mu.nc")
-r = np.loadtxt("../inputs/r.csv", delimiter=",")
-tau = np.loadtxt("../inputs/tau.csv", delimiter=",")
+ray_tracing = xr.open_dataset("../inputs/ray_tracing.nc")
+ray_tracing = ray_tracing.sel(path=slice(1, N + 1))
 
-# Compute TDOA
-toa = xr.DataArray(
-    data=tau[:, : N + 1],
-    coords={"distance": r, "interference": np.arange(N + 1)},
-    dims=["distance", "interference"],
-)
-tdoa = toa.diff("interference")
+# Compute TDOA/PDOA
+toa = ray_tracing["toa"]
+poa = np.arctan2(ray_tracing["amplitude_imag"], ray_tracing["amplitude_real"])
+tdoa = toa.diff("path", label="lower").rename({"path": "interference"})
+pdoa = poa.diff("path", label="lower").rename({"path": "interference"})
 
 
 # Utils
@@ -34,7 +32,6 @@ def amplitude_model(x, model):
 
 
 # Amplitude model
-
 models = {
     1: (8.9e2, 4.0, 8.0e3, 7.5e3),
     2: (1.6e3, 6.0, 1.4e4, 2.0e4),
@@ -52,11 +49,28 @@ mask = make_mask(sigma, tdoa, mu["quefrency"])
 output = mask * amplitude
 output = output.sum("interference")
 
+# Complete model
+f0 = 16.5
+dtau = 0.05
+tau = np.linspace(0, 10.24, 513)
+tau = xr.DataArray(data=tau, coords={"quefrency": tau}, dims=["quefrency"])
+mu_model = (
+    amplitude
+    * np.cos(2 * np.pi * (tau - tdoa) * f0 - pdoa)
+    * np.exp(-((tau - tdoa) ** 2) / dtau**2)
+)
+sigma_model = (0.625 + np.cos(np.pi * tau / tau.max()) / 5) / np.sqrt(1024)
+sigma_model = xr.DataArray(sigma_model, coords={"quefrency": tau}, dims=["quefrency"])
+
+tdoa.to_netcdf("../data/tdoa_model.nc")
+mu_model.to_netcdf("../data/mu_model.nc")
+sigma_model.to_netcdf("../data/mu_sigma.nc")
+
 # Limit to 50 km
 tdoa.loc[{"distance": slice(50000, None)}] = np.nan
 output.loc[{"distance": slice(50000, None)}] = 0
 
-# Plot
+# %% Plot
 plt.style.use("../figures.mplstyle")
 fig, axes = plt.subplots(
     nrows=2,

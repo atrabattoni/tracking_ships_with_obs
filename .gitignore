@@ -1,7 +1,4 @@
 data/
 figs/
-inputs/
-manuscript/
 *.json
 *.pyc
-tmp.*
