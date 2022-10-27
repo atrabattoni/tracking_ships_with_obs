@@ -8,11 +8,11 @@ from obspy import read_inventory
 import obsea
 
 # AIS
-s_ais = obsea.read_cls("/Volumes/SSD/data/AIS/cls.csv", cargo_and_tanker=False)
-t_ais = obsea.read_marine_traffic("/Volumes/SSD/data/AIS/marine_traffic.csv")
+s_ais = obsea.read_cls(obsea.get_dataset_path("ais_cls"), cargo_and_tanker=False)
+t_ais = obsea.read_marine_traffic(obsea.get_dataset_path("ais_marine_traffic"))
 
 # Stations
-inventory = read_inventory("/Volumes/SSD/data/StationXML/RR.xml")
+inventory = read_inventory("../data/RR03.xml")
 (network,) = inventory
 (rr03,) = network.select(station="RR03")
 

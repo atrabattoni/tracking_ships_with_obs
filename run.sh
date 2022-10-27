@@ -26,6 +26,6 @@ python 2_process.py
 python 3_error.py
 python 3_plot.py
 cd ..
-cd 3_detection.py
+cd 3_detection
 python 4_plot.py
 cd ..
