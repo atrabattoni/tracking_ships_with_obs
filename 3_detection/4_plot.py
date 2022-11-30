@@ -5,15 +5,12 @@ Plot figure 7.
 # %% Libs
 from glob import glob
 
-import colorcet
-import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import obsea
 import pandas as pd
 import xarray as xr
-from obspy import read, read_inventory
 
 # %% Dates
 date_range = pd.date_range("2013-05-21", "2013-05-27", freq="2D")

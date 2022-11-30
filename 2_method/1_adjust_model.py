@@ -7,7 +7,6 @@ import xarray as xr
 import pandas as pd
 import obsea
 from obspy.clients.fdsn import Client
-import matplotlib.pyplot as plt
 
 # Inputs
 client = Client("RESIF")

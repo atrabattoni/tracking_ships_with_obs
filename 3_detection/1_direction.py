@@ -3,13 +3,8 @@ Compute azimuthal log-likelihood.
 """
 
 # %% Libs
-from colorcet import cm as cc
 import numpy as np
 import pandas as pd
-import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib.ticker import MultipleLocator
 from obspy import read, read_inventory
 
 import obsea
