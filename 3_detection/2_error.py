@@ -1,3 +1,7 @@
+"""
+Estimate detection performances.
+"""
+
 # %% Import libs
 from glob import glob
 

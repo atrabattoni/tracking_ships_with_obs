@@ -5,7 +5,6 @@ Plot figure 4.
 # %%
 import numpy as np
 import xarray as xr
-from scipy.stats import skewnorm
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
