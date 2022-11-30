@@ -5,16 +5,15 @@ Plot figure 8.
 
 from glob import glob
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import matplotlib.dates as mdates
 import numpy as np
 import obsea
+import obsea.tracking as tracking
 import pandas as pd
 import xarray as xr
 from colorcet import cm as cc
-
-import utils
 
 # Load segments
 segments = pd.read_csv(
@@ -54,13 +53,13 @@ def plot(fig, cell, nsegment, k, ntrack):
     rtrack_interp = rtracks_interp.iloc[ntrack - 1]
     t = track["time"]
     t_interp = track_interp["time"]
-    t_ais = utils.select_segment(track, segment)["time"].values
-    t_line = utils.select_segment(track_interp, segment)["time"].values
-    la = utils.select_segment(loglik_a, segment)
-    lr = utils.select_segment(loglik_r, segment)
+    t_ais = tracking.select_segment(track, segment)["time"].values
+    t_line = tracking.select_segment(track_interp, segment)["time"].values
+    la = tracking.select_segment(loglik_a, segment)
+    lr = tracking.select_segment(loglik_r, segment)
 
     _t_line = (t_line - np.datetime64(0, "s")) / (np.timedelta64(1, "s"))
-    r, a, _ = utils.generate_line(
+    r, a, _ = tracking.generate_line(
         line["cpa_time"],
         line["cpa_distance"],
         line["speed_heading"],
@@ -71,7 +70,7 @@ def plot(fig, cell, nsegment, k, ntrack):
     y = r * np.cos(a + np.deg2rad(77))
 
     _t_ais = (t_ais - np.datetime64(0, "s")) / (np.timedelta64(1, "s"))
-    r_ais, a_ais, _ = utils.generate_line(
+    r_ais, a_ais, _ = tracking.generate_line(
         line["cpa_time"],
         line["cpa_distance"],
         line["speed_heading"],

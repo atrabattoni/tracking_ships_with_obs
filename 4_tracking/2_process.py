@@ -4,12 +4,11 @@ Estimate track parameters for each segment.
 
 
 import numpy as np
+import obsea.tracking as tracking
 import pandas as pd
 import xarray as xr
 from dask import compute, delayed
 from dask.diagnostics import ProgressBar
-
-import utils
 
 
 def process(segment, ntrack, data):
@@ -18,17 +17,17 @@ def process(segment, ntrack, data):
     Pd = xr.Dataset({"a": 0.9, "r": 0.6})
 
     # Segment slicing
-    t_cpa = utils.to_posix(segment["cpatime"])
+    t_cpa = tracking.to_posix(segment["cpatime"])
 
-    ell = utils.select_segment(data, segment)
-    ell = utils.detection_probability(ell, Pd)
+    ell = tracking.select_segment(data, segment)
+    ell = tracking.detection_probability(ell, Pd)
 
     _ell = ell.copy()
     _ell["time"] = (_ell["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
 
     # Line Fitting
-    loglik = np.log(utils.smooth(_ell, 14, 10, 1))  # 14 km, 5°, 0.5 m/s
-    brute_force = utils.make_brute_force(loglik)
+    loglik = np.log(tracking.smooth(_ell, 14, 10, 1))  # 14 km, 5°, 0.5 m/s
+    brute_force = tracking.make_brute_force(loglik)
 
     # Coarse
     tg = t_cpa + np.arange(-30 * 60, 30 * 60 + 3 * 60, 3 * 60)

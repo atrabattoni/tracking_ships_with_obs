@@ -1,13 +1,12 @@
 """
 Make temporal segmentation.
 """
-
-
 # %% Imports
+
+
+import obsea.tracking as tracking
 import pandas as pd
 import xarray as xr
-
-import utils
 
 # %% Parameters
 obs_orientation = 77.0
@@ -29,23 +28,24 @@ Pd = dict(r=0.6, a=0.9)
 n = dict(r=60, a=120)
 
 ell = {
-    k: utils.detection_probability(utils.marginal(v), Pd[k[0]]) for k, v in data.items()
+    k: tracking.detection_probability(tracking.marginal(v), Pd[k[0]])
+    for k, v in data.items()
 }
 ell["all"] = ell["r"] * ell["a"]
-ell = {k: utils.segment(v, n[k[0]]) for k, v in ell.items()}
-p = {k: utils.ell2proba(v) for k, v in ell.items()}
+ell = {k: tracking.segment(v, n[k[0]]) for k, v in ell.items()}
+p = {k: tracking.ell2proba(v) for k, v in ell.items()}
 dtc = {
     "vm": (p["all"] > 0.5) & (p["r"] > 0.5) & (p["rm"] > p["rp"]),
     "vp": (p["all"] > 0.5) & (p["r"] > 0.5) & (p["rm"] < p["rp"]),
 }
 dtc["xor"] = (p["all"] > 0.5) & (~dtc["vm"]) & (~dtc["vp"])
 dtc["all"] = dtc["vm"] + dtc["vp"] + dtc["xor"]
-dtc_chunk = {k: utils.chunk(v, date_range) for k, v in dtc.items()}
+dtc_chunk = {k: tracking.chunk(v, date_range) for k, v in dtc.items()}
 
 dtc = xr.Dataset(dtc)
 
 # %% Segment
-segments = utils.delimit(dtc)
+segments = tracking.delimit(dtc)
 segments = pd.DataFrame(segments, columns=["starttime", "cpatime", "endtime"])
 
 # %% Save
