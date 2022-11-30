@@ -1,3 +1,11 @@
+"""
+Process the AIS data. 
+
+AIS positions are converted into tracks. Cooridnates are projected onto a local 
+cooridinate reference system centered onto the station location. Ship passing close 
+enought are selected.
+"""
+
 # %% Libs
 import numpy as np
 import obsea

@@ -1,3 +1,7 @@
+"""
+Plot figure 3.
+"""
+
 # %% Import Libraries
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt

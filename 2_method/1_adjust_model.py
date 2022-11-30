@@ -1,3 +1,7 @@
+"""
+Make the stack of good quality ship passages plotted in figure 5a. 
+"""
+
 import numpy as np
 import xarray as xr
 import pandas as pd

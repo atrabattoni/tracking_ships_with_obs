@@ -1,3 +1,8 @@
+"""
+Compute radial log-likelihood.
+"""
+
+
 # %% Libs
 import numpy as np
 import obsea

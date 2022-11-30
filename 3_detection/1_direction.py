@@ -1,3 +1,7 @@
+"""
+Compute azimuthal log-likelihood.
+"""
+
 # %% Libs
 from colorcet import cm as cc
 import numpy as np

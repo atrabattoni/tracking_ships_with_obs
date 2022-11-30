@@ -1,3 +1,7 @@
+"""
+Plot figure 7.
+"""
+
 # %% Libs
 from glob import glob
 

@@ -1,3 +1,7 @@
+"""
+Download the seismological data stream over the period of interest.
+"""
+
 from obspy import read_inventory, UTCDateTime
 from obspy.clients.fdsn import Client
 import obsea

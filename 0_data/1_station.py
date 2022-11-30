@@ -1,3 +1,7 @@
+"""
+Download the metadata of the station fo interest.
+"""
+
 from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 

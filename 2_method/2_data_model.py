@@ -1,3 +1,7 @@
+"""
+Make the propagative model and plot figure 5.
+"""
+
 from scipy.stats import skewnorm
 import numpy as np
 import xarray as xr

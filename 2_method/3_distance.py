@@ -1,3 +1,7 @@
+"""
+Plot figure 6.
+"""
+
 # %% Libraries
 import colorcet
 import matplotlib.dates as mdates

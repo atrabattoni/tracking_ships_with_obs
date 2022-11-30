@@ -1,3 +1,8 @@
+"""
+Plot figure 8.
+"""
+
+
 from glob import glob
 
 import matplotlib.pyplot as plt

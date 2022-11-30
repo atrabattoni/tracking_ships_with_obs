@@ -1,3 +1,7 @@
+"""
+Plots figure 2.
+"""
+
 import numpy as np
 from obspy import read, read_inventory
 import obsea
