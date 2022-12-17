@@ -14,7 +14,7 @@ inventory = client.get_stations(network="YV", station="RR03", level="response")
 (network,) = inventory
 (station,) = network
 ais_fname = obsea.get_dataset_path("ais_marine_traffic")
-mmsi_list = pd.read_csv(obsea.get_dataset_path("mmsi_list"), squeeze=True).tolist()
+mmsi_list = pd.read_csv(obsea.get_dataset_path("mmsi_list")).squeeze("columns").tolist()
 
 # Paremeters
 timedelta = pd.Timedelta(24, "h")
@@ -116,7 +116,6 @@ for k in [1, 3, 10, 16, 23, 30, 31, 32, 33, 35]:
     C[str(k) + "_coming"], C[str(k) + "_leaving"] = process(k)
 
 ds = xr.Dataset(C)
-# ds.to_netcdf("data.nc")
 
 std = (0.625 + np.cos(np.pi * q / q.max()) / 5) / np.sqrt(nperseg)
 std = xr.DataArray(
