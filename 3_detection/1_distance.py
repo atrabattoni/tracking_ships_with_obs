@@ -48,17 +48,7 @@ t = (t - pd.Timestamp(0)) / pd.Timedelta(1, "s")
 _ceps = ceps.copy()
 _ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
 _ceps = obsea.batch_svd_filter(_ceps, 3 * 3600, remove_mean=False)
-_ell = obsea.cepstral_detection(
-    _ceps,
-    model,
-    grid["dr"],
-    grid["rmax"],
-    grid["dv"],
-    grid["vmax"],
-    nsigma,
-    grid["dt"],
-    t=t,
-)
+_ell = obsea.cepstral_detection(_ceps, model, grid, nsigma, t=t)
 ell = _ell.copy()
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 

@@ -48,17 +48,7 @@ ceps = obsea.svd_filter(ceps, remove_mean=False)
 
 _ceps = ceps.copy()
 _ceps["time"] = (_ceps["time"] - np.datetime64(0, "s")) / np.timedelta64(1, "s")
-_ell = obsea.cepstral_detection(
-    _ceps,
-    model,
-    grid["dr"],
-    grid["rmax"],
-    grid["dv"],
-    grid["vmax"],
-    nsigma,
-    grid["dt"],
-    t_step=60,
-)
+_ell = obsea.cepstral_detection(_ceps, model, grid, nsigma, t_step=60)
 ell = _ell.copy()
 ell["time"] = pd.to_datetime(ell["time"].values, unit="s")
 marginal = (ell * ell["distance"]).sum("distance") / ell["distance"].sum("distance")
